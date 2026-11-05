@@ -452,6 +452,11 @@
     return `
       <li class="task-item ${isCompleted ? 'is-completed' : ''}" data-id="${escapeHTML(task.id)}">
         <div class="task-main-row">
+          <button type="button" class="task-checkbox-btn ${isCompleted ? 'checked' : ''}" data-id="${escapeHTML(task.id)}" title="${isCompleted ? 'Mark as unfinished' : 'Mark as completed'}" aria-label="Toggle task completion">
+            <svg class="checkbox-check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 8.5 6.5 12 13 4.5"></polyline>
+            </svg>
+          </button>
           <span class="task-text">${escapeHTML(task.text)}</span>
           <div class="task-badges">
             ${dateBadgeHTML}
@@ -666,8 +671,20 @@
     // 1. Add Task Form
     addTaskForm.addEventListener('submit', handleAddTask);
 
-    // 2. Task List delegation (Edit, Delete, Status change)
+    // 2. Task List delegation (Checkbox, Edit, Delete, Status change)
     dateGroupsContainer.addEventListener('click', (e) => {
+      const checkboxBtn = e.target.closest('.task-checkbox-btn');
+      if (checkboxBtn) {
+        const id = checkboxBtn.dataset.id;
+        const task = tasks.find((t) => t.id === id);
+        if (task) {
+          task.status = task.status === 'completed' ? 'unfinished' : 'completed';
+          saveTasks();
+          renderTasks();
+        }
+        return;
+      }
+
       const editBtn = e.target.closest('.action-edit');
       if (editBtn) {
         openEditModal(editBtn.dataset.id);

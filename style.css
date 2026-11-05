@@ -8,55 +8,71 @@
 }
 
 :root {
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --bg-color: #f8fafc;
+  /* Typography: Open Sans as requested */
+  --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* App Canvas Background inspired by the soft mobile mockup palette */
+  --bg-color: #f0f2f7;
   --surface-color: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --border-color: #e2e8f0;
+
+  /* Butter Yellow Card System */
+  --card-butter-yellow: #fff9db;
+  --card-butter-hover: #fff4c2;
+  --card-butter-border: #f8df82;
+  --card-butter-completed: #fffcf0;
+  --card-butter-completed-border: #fbeaba;
+
+  /* Text Colors */
+  --text-main: #232018;
+  --text-muted: #6b6454;
+  --text-subtle: #968e7d;
+  --border-color: #e2e5eb;
   --border-focus: #3b82f6;
 
-  /* Primary Brand */
+  /* Primary Brand (inspired by the blue action button in the mockup) */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
+
+  /* Checklist Mint Green (inspired by the Groceries board in mockup) */
+  --mint-green: #10b981;
+  --mint-green-hover: #059669;
+  --mint-light: #ecfdf5;
 
   /* Status Colors */
   --unfinished-bg: #eff6ff;
   --unfinished-text: #1d4ed8;
   --unfinished-border: #bfdbfe;
 
-  --paused-bg: #fffbeb;
-  --paused-text: #b45309;
-  --paused-border: #fde68a;
+  --paused-bg: #fff7ed;
+  --paused-text: #c2410c;
+  --paused-border: #fed7aa;
 
-  --completed-bg: #f0fdf4;
-  --completed-text: #15803d;
-  --completed-border: #bbf7d0;
+  --completed-bg: #ecfdf5;
+  --completed-text: #047857;
+  --completed-border: #a7f3d0;
 
   /* Date Badges */
   --overdue-bg: #fef2f2;
-  --overdue-text: #b91c1c;
+  --overdue-text: #dc2626;
   --overdue-border: #fecaca;
-
-  --today-bg: #eff6ff;
-  --today-text: #1d4ed8;
-  --today-border: #bfdbfe;
 
   /* Danger */
   --danger: #dc2626;
   --danger-hover: #b91c1c;
   --danger-light: #fef2f2;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  /* Soft modern shadows matching mobile mockups */
+  --shadow-sm: 0 2px 4px rgba(60, 50, 20, 0.04);
+  --shadow-card: 0 4px 16px rgba(180, 150, 40, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover: 0 8px 24px rgba(180, 150, 40, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px -4px rgba(30, 25, 10, 0.12), 0 6px 12px -2px rgba(30, 25, 10, 0.06);
 
+  /* Large, friendly curved corners matching the mockup */
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 26px;
   --radius-full: 9999px;
 }
 
@@ -64,10 +80,10 @@ body {
   font-family: var(--font-family);
   background-color: var(--bg-color);
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  padding: 24px 16px;
+  padding: 28px 16px;
   overflow-x: hidden;
 }
 
@@ -76,7 +92,7 @@ body {
    ========================================================================== */
 .app-container {
   width: 100%;
-  max-width: 680px;
+  max-width: 660px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -107,21 +123,22 @@ body {
 }
 
 .header-branding h1 {
-  font-size: 1.85rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
   color: var(--text-main);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .total-badge {
   background-color: var(--primary);
   color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 5px 12px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  padding: 5px 13px;
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
   white-space: nowrap;
+  letter-spacing: 0.01em;
 }
 
 /* Burger Button at Top Right Corner */
@@ -131,26 +148,27 @@ body {
   justify-content: center;
   align-items: center;
   gap: 5px;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   background: var(--surface-color);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   cursor: pointer;
   padding: 8px;
   box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   flex-shrink: 0;
 }
 
 .burger-btn:hover {
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
+  background-color: var(--card-butter-yellow);
+  border-color: var(--card-butter-border);
+  transform: translateY(-1px);
 }
 
 .burger-bar {
   width: 20px;
-  height: 2px;
+  height: 2.2px;
   background-color: var(--text-main);
   border-radius: 2px;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -159,65 +177,70 @@ body {
 .subtitle {
   color: var(--text-muted);
   font-size: 0.95rem;
+  font-weight: 400;
 }
 
-/* Stats Grid */
+/* Stats Grid in Butter Yellow Cards */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
   margin-top: 4px;
 }
 
 .stat-card {
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
+  background: var(--card-butter-yellow);
+  border: 1.5px solid var(--card-butter-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .stat-number {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.45rem;
+  font-weight: 800;
   color: var(--text-main);
+  line-height: 1.1;
 }
 
 .stat-label {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top: 2px;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
 }
 
 /* ==========================================================================
-   Card Component & Add Task Form
+   Add Task Card (Butter Yellow)
    ========================================================================== */
 .card {
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 18px 20px;
-  box-shadow: var(--shadow-sm);
+  background: var(--card-butter-yellow);
+  border: 1.5px solid var(--card-butter-border);
+  border-radius: var(--radius-xl);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease;
 }
 
 .form-label {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
 }
 
 .input-row {
@@ -228,13 +251,13 @@ body {
 
 .input-row input[type="text"] {
   flex: 2 1 180px;
-  min-height: 44px;
+  min-height: 46px;
   padding: 10px 14px;
   font-size: 0.95rem;
   font-family: inherit;
   color: var(--text-main);
   background: #ffffff;
-  border: 1.5px solid var(--border-color);
+  border: 1.5px solid var(--card-butter-border);
   border-radius: var(--radius-md);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -249,7 +272,7 @@ body {
 
 .date-icon-inline {
   position: absolute;
-  left: 10px;
+  left: 11px;
   pointer-events: none;
   font-size: 0.95rem;
   color: var(--text-muted);
@@ -257,14 +280,14 @@ body {
 
 .date-input-wrapper input[type="date"] {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 10px 10px 34px;
+  min-height: 46px;
+  padding: 10px 10px 10px 36px;
   font-size: 0.875rem;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-main);
   background-color: #ffffff;
-  border: 1.5px solid var(--border-color);
+  border: 1.5px solid var(--card-butter-border);
   border-radius: var(--radius-md);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -273,24 +296,24 @@ body {
 
 .select-wrapper {
   position: relative;
-  flex: 1 1 115px;
+  flex: 1 1 120px;
 }
 
 select {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 30px 10px 12px;
+  min-height: 46px;
+  padding: 10px 32px 10px 12px;
   font-size: 0.9rem;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-main);
   background-color: #ffffff;
-  border: 1.5px solid var(--border-color);
+  border: 1.5px solid var(--card-butter-border);
   border-radius: var(--radius-md);
   outline: none;
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b6454' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 16px;
@@ -301,8 +324,8 @@ select {
 .modal-input:focus,
 .search-box input:focus,
 select:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
 }
 
 /* ==========================================================================
@@ -312,48 +335,51 @@ select:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 10px 18px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 7px;
+  min-height: 46px;
+  padding: 10px 20px;
+  font-size: 0.925rem;
+  font-weight: 700;
   font-family: inherit;
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition: all 0.18s ease;
   user-select: none;
   white-space: nowrap;
 }
 
 .btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .btn-primary {
   background-color: var(--primary);
   color: #ffffff;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
 }
 
 .btn-secondary {
   background-color: #ffffff;
   color: var(--text-main);
   border: 1.5px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-  background-color: #f8fafc;
-  border-color: #cbd5e1;
+  background-color: var(--card-butter-yellow);
+  border-color: var(--card-butter-border);
 }
 
 .btn-danger {
   background-color: var(--danger);
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
 }
 
 .btn-danger:hover {
@@ -361,7 +387,7 @@ select:focus {
 }
 
 .btn-icon {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   line-height: 1;
 }
 
@@ -371,7 +397,7 @@ select:focus {
 .controls-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .controls-top-row {
@@ -398,15 +424,16 @@ select:focus {
 
 .search-box input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 40px;
+  min-height: 46px;
+  padding: 10px 42px;
   font-size: 0.925rem;
   font-family: inherit;
   color: var(--text-main);
-  background: var(--surface-color);
+  background: #ffffff;
   border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   outline: none;
+  box-shadow: var(--shadow-sm);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -434,7 +461,7 @@ select:focus {
 
 .calendar-trigger-btn {
   flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
 }
 
 /* Active Date Filter Banner */
@@ -442,13 +469,14 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--primary-light);
-  border: 1px solid var(--unfinished-border);
+  background-color: var(--card-butter-yellow);
+  border: 1.5px solid var(--card-butter-border);
   border-radius: var(--radius-md);
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--primary-hover);
+  padding: 9px 16px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
 }
 
 .active-date-banner[hidden] {
@@ -458,11 +486,11 @@ select:focus {
 .clear-date-btn {
   background: transparent;
   border: none;
-  font-size: 1.25rem;
-  color: var(--primary-hover);
+  font-size: 1.35rem;
+  color: var(--text-main);
   cursor: pointer;
   line-height: 1;
-  padding: 2px 4px;
+  padding: 2px 6px;
 }
 
 /* Filter Pills */
@@ -475,21 +503,23 @@ select:focus {
 }
 
 .pill-btn {
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
   color: var(--text-muted);
-  font-size: 0.825rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   font-family: inherit;
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: var(--radius-full);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.18s ease;
 }
 
 .pill-btn:hover {
-  border-color: #cbd5e1;
+  background-color: var(--card-butter-yellow);
+  border-color: var(--card-butter-border);
   color: var(--text-main);
 }
 
@@ -500,7 +530,7 @@ select:focus {
 }
 
 /* ==========================================================================
-   Date Groups & Task Items (Divide tasks based on dates)
+   Date Groups & Task Items (Butter Yellow Cards)
    ========================================================================== */
 .tasks-container {
   min-height: 200px;
@@ -509,7 +539,7 @@ select:focus {
 .date-groups-container {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
 }
 
 .date-group {
@@ -523,8 +553,8 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   padding: 4px 6px;
-  border-bottom: 1.5px solid var(--border-color);
-  margin-bottom: 2px;
+  border-bottom: 2px solid #e3e6ee;
+  margin-bottom: 4px;
 }
 
 .date-group-title-row {
@@ -534,29 +564,31 @@ select:focus {
 }
 
 .date-group-icon {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   line-height: 1;
 }
 
 .date-group-title {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
   color: var(--text-main);
+  letter-spacing: -0.02em;
 }
 
 .date-group-sub {
-  font-size: 0.8rem;
+  font-size: 0.825rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .date-group-badge {
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 3px 10px;
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 3px 12px;
   border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
 }
 
 .date-group-overdue .date-group-title {
@@ -576,43 +608,87 @@ select:focus {
   gap: 10px;
 }
 
-/* Task Item Card */
+/* Task Item Card - BUTTER YELLOW */
 .task-item {
-  background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
+  background: var(--card-butter-yellow);
+  border: 1.5px solid var(--card-butter-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 
 .task-item:hover {
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
+/* Completed Task Item Card */
 .task-item.is-completed {
-  background-color: #fcfdfd;
-  opacity: 0.9;
+  background-color: var(--card-butter-completed);
+  border-color: var(--card-butter-completed-border);
+  opacity: 0.92;
 }
 
 .task-item.is-completed .task-text {
   text-decoration: line-through;
+  text-decoration-color: var(--mint-green);
+  text-decoration-thickness: 2px;
   color: var(--text-subtle);
 }
 
 .task-main-row {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 12px;
 }
 
+/* Checklist Checkbox - Inspired by Mockup */
+.task-checkbox-btn {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 7px;
+  border: 2px solid #cebf82;
+  background-color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+  padding: 0;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.task-checkbox-btn:hover {
+  border-color: var(--mint-green);
+  background-color: var(--mint-light);
+}
+
+.task-checkbox-btn.checked {
+  background-color: var(--mint-green);
+  border-color: var(--mint-green);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+}
+
+.checkbox-check-icon {
+  width: 14px;
+  height: 14px;
+  color: #ffffff;
+  display: none;
+}
+
+.task-checkbox-btn.checked .checkbox-check-icon {
+  display: block;
+}
+
 .task-text {
-  font-size: 0.98rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-main);
   word-break: break-word;
   flex: 1;
@@ -634,9 +710,9 @@ select:focus {
   align-items: center;
   gap: 4px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: capitalize;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
   letter-spacing: 0.02em;
   border: 1px solid transparent;
@@ -665,19 +741,19 @@ select:focus {
   align-items: center;
   gap: 4px;
   font-size: 0.75rem;
-  font-weight: 500;
-  padding: 3px 8px;
+  font-weight: 600;
+  padding: 3px 9px;
   border-radius: var(--radius-full);
-  background-color: #f8fafc;
+  background-color: #ffffff;
   color: var(--text-muted);
-  border: 1px solid var(--border-color);
+  border: 1px solid #ebd88a;
 }
 
 .date-pill-overdue {
   background-color: var(--overdue-bg);
   color: var(--overdue-text);
   border-color: var(--overdue-border);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Task Controls Footer */
@@ -686,18 +762,19 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  border-top: 1.5px solid rgba(220, 195, 100, 0.35);
   flex-wrap: wrap;
 }
 
 .status-quick-select {
   min-height: 32px;
-  padding: 4px 26px 4px 8px;
+  padding: 4px 26px 4px 10px;
   font-size: 0.8rem;
+  font-weight: 600;
   border-radius: var(--radius-sm);
   background-size: 14px;
-  border-color: #e2e8f0;
+  border-color: #e5cb73;
 }
 
 .task-actions {
@@ -709,21 +786,21 @@ select:focus {
 
 .btn-action {
   min-height: 32px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  padding: 4px 11px;
+  font-size: 0.825rem;
+  font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid #e5cb73;
   background-color: #ffffff;
-  color: var(--text-muted);
+  color: var(--text-main);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.16s ease;
 }
 
 .btn-action:hover {
-  color: var(--text-main);
-  border-color: #cbd5e1;
-  background-color: #f8fafc;
+  background-color: var(--card-butter-yellow);
+  border-color: #d1b452;
+  transform: translateY(-1px);
 }
 
 .btn-action.action-delete:hover {
@@ -738,7 +815,7 @@ select:focus {
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: rgba(20, 18, 12, 0.45);
   backdrop-filter: blur(4px);
   z-index: 1050;
   transition: opacity 0.25s ease;
@@ -755,8 +832,8 @@ select:focus {
   bottom: 0;
   width: 310px;
   max-width: 85vw;
-  background-color: var(--surface-color);
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  box-shadow: -4px 0 28px rgba(0, 0, 0, 0.15);
   z-index: 1100;
   display: flex;
   flex-direction: column;
@@ -774,13 +851,14 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 22px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 22px 24px;
+  border-bottom: 1.5px solid var(--border-color);
+  background-color: var(--card-butter-yellow);
 }
 
 .drawer-header h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   color: var(--text-main);
 }
 
@@ -800,10 +878,10 @@ select:focus {
 }
 
 .drawer-body {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 22px;
   overflow-y: auto;
 }
 
@@ -815,10 +893,10 @@ select:focus {
 
 .drawer-section-title {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-subtle);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   padding: 0 8px;
 }
 
@@ -835,9 +913,9 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   font-size: 0.925rem;
-  font-weight: 500;
+  font-weight: 600;
   font-family: inherit;
   color: var(--text-main);
   background: transparent;
@@ -845,17 +923,18 @@ select:focus {
   border-radius: var(--radius-md);
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.16s ease;
 }
 
 .drawer-menu-item:hover {
-  background-color: #f1f5f9;
+  background-color: var(--card-butter-yellow);
 }
 
 .drawer-menu-item.active {
-  background-color: var(--primary-light);
-  color: var(--primary);
-  font-weight: 600;
+  background-color: var(--card-butter-yellow);
+  border-color: var(--card-butter-border);
+  color: var(--text-main);
+  font-weight: 700;
 }
 
 .drawer-menu-item.drawer-danger:hover {
@@ -876,15 +955,15 @@ select:focus {
 }
 
 .modal-description {
-  font-size: 0.9rem;
+  font-size: 0.925rem;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .date-presets-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -892,19 +971,20 @@ select:focus {
   font-size: 0.85rem;
   justify-content: flex-start;
   padding: 10px 14px;
+  border-radius: var(--radius-md);
 }
 
 .date-preset-btn:hover {
-  background-color: #f8fafc;
-  border-color: var(--border-focus);
-  color: var(--primary);
+  background-color: var(--card-butter-yellow);
+  border-color: var(--card-butter-border);
+  color: var(--text-main);
 }
 
 .calendar-specific-date-box {
-  background: #f8fafc;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px;
+  background: var(--card-butter-yellow);
+  border: 1.5px solid var(--card-butter-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
 }
 
 .date-picker-row {
@@ -915,6 +995,7 @@ select:focus {
 
 .date-picker-row input[type="date"] {
   flex: 1;
+  background-color: #ffffff;
 }
 
 /* ==========================================================================
@@ -926,11 +1007,11 @@ select:focus {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: var(--surface-color);
-  border: 2px dashed var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 48px 24px;
-  margin-top: 8px;
+  background: var(--card-butter-yellow);
+  border: 2px dashed var(--card-butter-border);
+  border-radius: var(--radius-xl);
+  padding: 52px 24px;
+  margin-top: 10px;
 }
 
 .empty-state.visible {
@@ -938,20 +1019,20 @@ select:focus {
 }
 
 .empty-icon {
-  font-size: 2.75rem;
-  margin-bottom: 12px;
+  font-size: 3rem;
+  margin-bottom: 14px;
   user-select: none;
 }
 
 .empty-state h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: var(--text-main);
   margin-bottom: 6px;
 }
 
 .empty-state p {
-  font-size: 0.9rem;
+  font-size: 0.925rem;
   color: var(--text-muted);
   max-width: 320px;
 }
@@ -962,7 +1043,7 @@ select:focus {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.5);
+  background-color: rgba(20, 18, 12, 0.5);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -977,12 +1058,12 @@ select:focus {
 }
 
 .modal-content {
-  background: var(--surface-color);
-  border-radius: var(--radius-lg);
+  background: #ffffff;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 440px;
-  padding: 24px;
+  padding: 26px;
   position: relative;
   animation: modalEnter 0.2s ease-out;
 }
@@ -1002,19 +1083,19 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .modal-header h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   color: var(--text-main);
 }
 
 .modal-close-btn {
   background: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: var(--text-muted);
   cursor: pointer;
   line-height: 1;
@@ -1027,13 +1108,13 @@ select:focus {
 }
 
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .modal-input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 46px;
+  padding: 10px 14px;
   font-size: 0.95rem;
   font-family: inherit;
   color: var(--text-main);
@@ -1048,7 +1129,7 @@ select:focus {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 22px;
 }
 
 /* Confirm modal specific */
@@ -1057,21 +1138,21 @@ select:focus {
 }
 
 .confirm-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+  font-size: 2.75rem;
+  margin-bottom: 14px;
 }
 
 .confirm-box h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   margin-bottom: 8px;
 }
 
 .confirm-box p {
-  font-size: 0.925rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: 22px;
+  line-height: 1.55;
 }
 
 .confirm-box .modal-actions {
@@ -1083,16 +1164,16 @@ select:focus {
    ========================================================================== */
 @media (max-width: 600px) {
   body {
-    padding: 16px 12px;
+    padding: 18px 12px;
   }
 
   .header-branding h1 {
-    font-size: 1.45rem;
+    font-size: 1.6rem;
   }
 
   .burger-btn {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     padding: 6px;
   }
 
@@ -1126,11 +1207,11 @@ select:focus {
   }
 
   .stat-card {
-    padding: 10px 8px;
+    padding: 12px 8px;
   }
 
   .stat-number {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 
   .stat-label {
@@ -1138,14 +1219,15 @@ select:focus {
   }
 
   .task-main-row {
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
   }
 
   .task-badges {
     width: 100%;
     justify-content: flex-start;
+    padding-left: 36px;
   }
 
   .task-footer {
