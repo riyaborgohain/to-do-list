@@ -35,6 +35,15 @@
   --completed-text: #15803d;
   --completed-border: #bbf7d0;
 
+  /* Date Badges */
+  --overdue-bg: #fef2f2;
+  --overdue-text: #b91c1c;
+  --overdue-border: #fecaca;
+
+  --today-bg: #eff6ff;
+  --today-text: #1d4ed8;
+  --today-border: #bfdbfe;
+
   /* Danger */
   --danger: #dc2626;
   --danger-hover: #b91c1c;
@@ -59,6 +68,7 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   padding: 24px 16px;
+  overflow-x: hidden;
 }
 
 /* ==========================================================================
@@ -74,7 +84,7 @@ body {
 }
 
 /* ==========================================================================
-   Header
+   Header & Burger Button
    ========================================================================== */
 .app-header {
   display: flex;
@@ -87,10 +97,16 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.header-branding {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.header-top h1 {
+.header-branding h1 {
   font-size: 1.85rem;
   font-weight: 700;
   color: var(--text-main);
@@ -100,12 +116,44 @@ body {
 .total-badge {
   background-color: var(--primary);
   color: #ffffff;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-sm);
   white-space: nowrap;
+}
+
+/* Burger Button at Top Right Corner */
+.burger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.burger-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.burger-bar {
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-main);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .subtitle {
@@ -154,7 +202,7 @@ body {
 }
 
 /* ==========================================================================
-   Card Component
+   Card Component & Add Task Form
    ========================================================================== */
 .card {
   background: var(--surface-color);
@@ -172,9 +220,6 @@ body {
   margin-bottom: 8px;
 }
 
-/* ==========================================================================
-   Add Task Form
-   ========================================================================== */
 .input-row {
   display: flex;
   gap: 10px;
@@ -182,7 +227,7 @@ body {
 }
 
 .input-row input[type="text"] {
-  flex: 1 1 200px;
+  flex: 2 1 180px;
   min-height: 44px;
   padding: 10px 14px;
   font-size: 0.95rem;
@@ -195,21 +240,46 @@ body {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.input-row input[type="text"]:focus,
-.modal-input:focus,
-.search-box input:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 140px;
+}
+
+.date-icon-inline {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.date-input-wrapper input[type="date"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 10px 10px 34px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--text-main);
+  background-color: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .select-wrapper {
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 115px;
 }
 
 select {
+  width: 100%;
   min-height: 44px;
-  padding: 10px 32px 10px 12px;
+  padding: 10px 30px 10px 12px;
   font-size: 0.9rem;
   font-family: inherit;
   font-weight: 500;
@@ -227,6 +297,9 @@ select {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.input-row input:focus,
+.modal-input:focus,
+.search-box input:focus,
 select:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
@@ -250,6 +323,7 @@ select:focus {
   cursor: pointer;
   transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   user-select: none;
+  white-space: nowrap;
 }
 
 .btn:active {
@@ -267,13 +341,14 @@ select:focus {
 }
 
 .btn-secondary {
-  background-color: #f1f5f9;
+  background-color: #ffffff;
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background-color: #e2e8f0;
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
 }
 
 .btn-danger {
@@ -286,23 +361,30 @@ select:focus {
 }
 
 .btn-icon {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1;
 }
 
 /* ==========================================================================
-   Search & Filters
+   Controls: Search, Calendar Button & Filters
    ========================================================================== */
 .controls-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+}
+
+.controls-top-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .search-box {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
 }
 
 .search-icon {
@@ -317,7 +399,7 @@ select:focus {
 .search-box input {
   width: 100%;
   min-height: 44px;
-  padding: 10px 40px 10px 40px;
+  padding: 10px 40px;
   font-size: 0.925rem;
   font-family: inherit;
   color: var(--text-main);
@@ -348,6 +430,39 @@ select:focus {
 
 .clear-btn.visible {
   display: block;
+}
+
+.calendar-trigger-btn {
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Active Date Filter Banner */
+.active-date-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-light);
+  border: 1px solid var(--unfinished-border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-hover);
+}
+
+.active-date-banner[hidden] {
+  display: none;
+}
+
+.clear-date-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--primary-hover);
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
 }
 
 /* Filter Pills */
@@ -385,10 +500,73 @@ select:focus {
 }
 
 /* ==========================================================================
-   Tasks Container & List
+   Date Groups & Task Items (Divide tasks based on dates)
    ========================================================================== */
 .tasks-container {
   min-height: 200px;
+}
+
+.date-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.date-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-bottom: 1.5px solid var(--border-color);
+  margin-bottom: 2px;
+}
+
+.date-group-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.date-group-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.date-group-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.date-group-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.date-group-badge {
+  background-color: #f1f5f9;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.date-group-overdue .date-group-title {
+  color: var(--overdue-text);
+}
+
+.date-group-overdue .date-group-badge {
+  background-color: var(--overdue-bg);
+  color: var(--overdue-text);
+  border: 1px solid var(--overdue-border);
 }
 
 .task-list {
@@ -417,7 +595,7 @@ select:focus {
 
 .task-item.is-completed {
   background-color: #fcfdfd;
-  opacity: 0.92;
+  opacity: 0.9;
 }
 
 .task-item.is-completed .task-text {
@@ -441,18 +619,26 @@ select:focus {
   line-height: 1.45;
 }
 
+.task-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 /* Status Badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
-  padding: 4px 10px;
+  padding: 3px 9px;
   border-radius: var(--radius-full);
   letter-spacing: 0.02em;
-  flex-shrink: 0;
   border: 1px solid transparent;
 }
 
@@ -472,6 +658,26 @@ select:focus {
   background-color: var(--completed-bg);
   color: var(--completed-text);
   border-color: var(--completed-border);
+}
+
+.date-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background-color: #f8fafc;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.date-pill-overdue {
+  background-color: var(--overdue-bg);
+  color: var(--overdue-text);
+  border-color: var(--overdue-border);
+  font-weight: 600;
 }
 
 /* Task Controls Footer */
@@ -527,6 +733,191 @@ select:focus {
 }
 
 /* ==========================================================================
+   Side Drawer (Burger Menu)
+   ========================================================================== */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  transition: opacity 0.25s ease;
+}
+
+.drawer-backdrop[hidden] {
+  display: none;
+}
+
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 310px;
+  max-width: 85vw;
+  background-color: var(--surface-color);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(0);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.side-drawer[hidden] {
+  display: flex;
+  transform: translateX(100%);
+  pointer-events: none;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawer-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.drawer-close-btn:hover {
+  color: var(--text-main);
+}
+
+.drawer-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 8px;
+}
+
+.drawer-menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawer-menu-item {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 0.925rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-main);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.drawer-menu-item:hover {
+  background-color: #f1f5f9;
+}
+
+.drawer-menu-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.drawer-menu-item.drawer-danger:hover {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.menu-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   Calendar Modal & Presets Grid
+   ========================================================================== */
+.calendar-modal-content {
+  max-width: 460px;
+}
+
+.modal-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.date-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.date-preset-btn {
+  font-size: 0.85rem;
+  justify-content: flex-start;
+  padding: 10px 14px;
+}
+
+.date-preset-btn:hover {
+  background-color: #f8fafc;
+  border-color: var(--border-focus);
+  color: var(--primary);
+}
+
+.calendar-specific-date-box {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.date-picker-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.date-picker-row input[type="date"] {
+  flex: 1;
+}
+
+/* ==========================================================================
    Friendly Empty State
    ========================================================================== */
 .empty-state {
@@ -578,7 +969,6 @@ select:focus {
   justify-content: center;
   padding: 16px;
   z-index: 1000;
-  opacity: 1;
   transition: opacity 0.2s ease;
 }
 
@@ -696,8 +1086,14 @@ select:focus {
     padding: 16px 12px;
   }
 
-  .header-top h1 {
-    font-size: 1.5rem;
+  .header-branding h1 {
+    font-size: 1.45rem;
+  }
+
+  .burger-btn {
+    width: 38px;
+    height: 38px;
+    padding: 6px;
   }
 
   .input-row {
@@ -705,10 +1101,24 @@ select:focus {
   }
 
   .input-row input[type="text"],
+  .date-input-wrapper,
+  .date-input-wrapper input[type="date"],
   .select-wrapper,
   .select-wrapper select,
   .input-row .btn {
     width: 100%;
+  }
+
+  .controls-top-row {
+    flex-direction: row;
+  }
+
+  .calendar-trigger-btn .calendar-btn-text {
+    display: none;
+  }
+
+  .calendar-trigger-btn {
+    padding: 10px 14px;
   }
 
   .stats-grid {
@@ -733,6 +1143,11 @@ select:focus {
     gap: 8px;
   }
 
+  .task-badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .task-footer {
     justify-content: space-between;
     width: 100%;
@@ -740,6 +1155,10 @@ select:focus {
 
   .task-actions {
     margin-left: 0;
+  }
+
+  .date-presets-grid {
+    grid-template-columns: 1fr;
   }
 
   .modal-actions {
@@ -750,4 +1169,3 @@ select:focus {
     width: 100%;
   }
 }
-

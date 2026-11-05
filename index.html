@@ -11,8 +11,16 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-top">
-        <h1>To-Do List</h1>
-        <span class="total-badge" id="total-badge">Total Tasks: 0</span>
+        <div class="header-branding">
+          <h1>To-Do List</h1>
+          <span class="total-badge" id="total-badge">Total Tasks: 0</span>
+        </div>
+        <!-- Burger Menu Button -->
+        <button type="button" class="burger-btn" id="burger-btn" aria-label="Open navigation menu" aria-expanded="false">
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+        </button>
       </div>
       <p class="subtitle">Keep track of your tasks and stay organized</p>
 
@@ -45,6 +53,14 @@
             autocomplete="off"
             required
           >
+          <div class="date-input-wrapper" title="Set due date">
+            <span class="date-icon-inline" aria-hidden="true">📅</span>
+            <input 
+              type="date" 
+              id="task-date-input" 
+              aria-label="Task due date"
+            >
+          </div>
           <div class="select-wrapper">
             <select id="task-status-input" aria-label="Task Status">
               <option value="unfinished" selected>Unfinished</option>
@@ -60,20 +76,35 @@
       </form>
     </section>
 
-    <!-- Search & Filter Controls -->
+    <!-- Search, Calendar & Filter Controls -->
     <section class="controls-section">
-      <div class="search-box">
-        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-        </svg>
-        <input 
-          type="text" 
-          id="search-input" 
-          placeholder="Search tasks by title or status..." 
-          autocomplete="off"
-          aria-label="Search tasks"
-        >
-        <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search">&times;</button>
+      <div class="controls-top-row">
+        <!-- Search Box -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+          </svg>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search tasks by title or status..." 
+            autocomplete="off"
+            aria-label="Search tasks"
+          >
+          <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search">&times;</button>
+        </div>
+
+        <!-- Calendar Button -->
+        <button type="button" class="btn btn-secondary calendar-trigger-btn" id="calendar-btn" title="Filter tasks by calendar date">
+          <span class="btn-icon">📅</span>
+          <span class="calendar-btn-text">Calendar</span>
+        </button>
+      </div>
+
+      <!-- Active Date Filter Pill (shown when a date filter is applied) -->
+      <div id="active-date-banner" class="active-date-banner" hidden>
+        <span class="active-date-text" id="active-date-text">Filtered by date</span>
+        <button type="button" id="clear-date-filter-btn" class="clear-date-btn" title="Reset date filter" aria-label="Reset date filter">&times;</button>
       </div>
 
       <!-- Quick Status Filter Pills -->
@@ -85,11 +116,11 @@
       </div>
     </section>
 
-    <!-- Task List -->
+    <!-- Task List (Divided by Dates) -->
     <main class="tasks-container">
-      <ul id="task-list" class="task-list" aria-live="polite">
-        <!-- Tasks rendered dynamically -->
-      </ul>
+      <div id="date-groups-container" class="date-groups-container" aria-live="polite">
+        <!-- Date-divided task groups rendered dynamically -->
+      </div>
 
       <!-- Friendly Empty State -->
       <div id="empty-state" class="empty-state">
@@ -98,6 +129,76 @@
         <p id="empty-subtitle">Add your first task above to start organizing your day.</p>
       </div>
     </main>
+  </div>
+
+  <!-- Side Drawer / Burger Navigation Menu -->
+  <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+  <aside id="side-drawer" class="side-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu" hidden>
+    <div class="drawer-header">
+      <h2>Menu</h2>
+      <button type="button" class="drawer-close-btn" id="drawer-close-btn" aria-label="Close menu">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <!-- Date Views Section -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Date Views</span>
+        <ul class="drawer-menu-list">
+          <li><button type="button" class="drawer-menu-item active" data-date-filter="all"><span class="menu-icon">📅</span> All Dates</button></li>
+          <li><button type="button" class="drawer-menu-item" data-date-filter="today"><span class="menu-icon">☀️</span> Today</button></li>
+          <li><button type="button" class="drawer-menu-item" data-date-filter="tomorrow"><span class="menu-icon">🌅</span> Tomorrow</button></li>
+          <li><button type="button" class="drawer-menu-item" data-date-filter="upcoming"><span class="menu-icon">📆</span> Upcoming</button></li>
+          <li><button type="button" class="drawer-menu-item" data-date-filter="overdue"><span class="menu-icon">⚠️</span> Overdue</button></li>
+          <li><button type="button" class="drawer-menu-item" data-date-filter="no-date"><span class="menu-icon">📝</span> Without Date</button></li>
+        </ul>
+      </div>
+
+      <!-- Quick Actions Section -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Task Actions</span>
+        <ul class="drawer-menu-list">
+          <li><button type="button" class="drawer-menu-item" id="drawer-clear-completed"><span class="menu-icon">🧹</span> Clear Completed</button></li>
+          <li><button type="button" class="drawer-menu-item drawer-danger" id="drawer-clear-all"><span class="menu-icon">🗑️</span> Clear All Tasks</button></li>
+        </ul>
+      </div>
+
+      <!-- Links Section -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Project</span>
+        <a href="https://github.com/riyaborgohain/to-do-list" target="_blank" rel="noopener noreferrer" class="drawer-menu-item drawer-link">
+          <span class="menu-icon">🐙</span> GitHub Repository ↗
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Calendar Date Filter Modal -->
+  <div id="calendar-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title" hidden>
+    <div class="modal-content calendar-modal-content">
+      <div class="modal-header">
+        <h2 id="calendar-modal-title">Filter by Date</h2>
+        <button type="button" class="modal-close-btn" id="calendar-modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="calendar-modal-body">
+        <p class="modal-description">Choose a date preset or pick a specific date to view tasks:</p>
+        
+        <div class="date-presets-grid">
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="all">📅 All Dates</button>
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="today">☀️ Today</button>
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="tomorrow">🌅 Tomorrow</button>
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="upcoming">📆 Upcoming</button>
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="overdue">⚠️ Overdue</button>
+          <button type="button" class="btn btn-secondary date-preset-btn" data-preset="no-date">📝 Without Date</button>
+        </div>
+
+        <div class="calendar-specific-date-box">
+          <label for="calendar-picker-input" class="form-label">Or Pick a Specific Date:</label>
+          <div class="date-picker-row">
+            <input type="date" id="calendar-picker-input" class="modal-input">
+            <button type="button" class="btn btn-primary" id="apply-specific-date-btn">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Edit Task Modal -->
@@ -112,6 +213,10 @@
         <div class="form-group">
           <label for="edit-task-text" class="form-label">Task Description</label>
           <input type="text" id="edit-task-text" class="modal-input" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="edit-task-date" class="form-label">Due Date</label>
+          <input type="date" id="edit-task-date" class="modal-input">
         </div>
         <div class="form-group">
           <label for="edit-task-status" class="form-label">Status</label>
@@ -129,15 +234,15 @@
     </div>
   </div>
 
-  <!-- Confirmation Modal for Deletion -->
+  <!-- Confirmation Modal for Deletion & Actions -->
   <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" hidden>
     <div class="modal-content confirm-box">
       <div class="confirm-icon">⚠️</div>
-      <h2 id="confirm-modal-title">Delete Task?</h2>
-      <p id="confirm-modal-message">Are you sure you want to delete this task? This action cannot be undone.</p>
+      <h2 id="confirm-modal-title">Are you sure?</h2>
+      <p id="confirm-modal-message">This action cannot be undone.</p>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="confirm-cancel-btn">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+        <button type="button" class="btn btn-danger" id="confirm-action-btn">Delete</button>
       </div>
     </div>
   </div>
@@ -145,4 +250,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-

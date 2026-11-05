@@ -1,13 +1,15 @@
 /**
  * Simple To-Do List Application
  * Features:
- * - Add tasks with status: Unfinished, Paused, Completed
- * - Edit task text and status
- * - Delete tasks with confirmation
+ * - Add tasks with: Title, Due Date, and Status (Unfinished, Paused, Completed)
+ * - Divide and group tasks based on dates (Overdue, Today, Tomorrow, Upcoming, Without Date)
+ * - Calendar button with interactive Date Filter modal & specific date picker
+ * - Burger menu (Side Drawer) in top right corner with date views & quick actions
  * - Real-time search and status filtering
- * - Total and status-based task counts
+ * - Edit task text, date, and status
+ * - Delete tasks with confirmation
  * - LocalStorage persistence
- * - Friendly empty states
+ * - Mobile-responsive & accessible
  */
 
 (function () {
@@ -16,17 +18,19 @@
   // Storage key
   const STORAGE_KEY = 'todo_app_tasks';
 
-  // State
+  // App State
   let tasks = [];
-  let currentFilter = 'all';
+  let statusFilter = 'all';     // 'all' | 'unfinished' | 'paused' | 'completed'
+  let dateFilter = 'all';       // 'all' | 'today' | 'tomorrow' | 'upcoming' | 'overdue' | 'no-date' | specific 'YYYY-MM-DD'
   let searchQuery = '';
-  let pendingDeleteId = null;
+  let pendingAction = null;     // { type: 'delete' | 'clear-completed' | 'clear-all', id?: string }
 
-  // DOM Elements
+  // DOM Elements - Main Layout
   const addTaskForm = document.getElementById('add-task-form');
   const taskInput = document.getElementById('task-input');
+  const taskDateInput = document.getElementById('task-date-input');
   const taskStatusInput = document.getElementById('task-status-input');
-  const taskList = document.getElementById('task-list');
+  const dateGroupsContainer = document.getElementById('date-groups-container');
   const emptyState = document.getElementById('empty-state');
   const emptyTitle = document.getElementById('empty-title');
   const emptySubtitle = document.getElementById('empty-subtitle');
@@ -37,10 +41,30 @@
   const countPaused = document.getElementById('count-paused');
   const countCompleted = document.getElementById('count-completed');
 
-  // Search & Filter Elements
+  // Search & Active Filter Elements
   const searchInput = document.getElementById('search-input');
   const clearSearchBtn = document.getElementById('clear-search-btn');
   const filterPillBtns = document.querySelectorAll('.pill-btn');
+  const activeDateBanner = document.getElementById('active-date-banner');
+  const activeDateText = document.getElementById('active-date-text');
+  const clearDateFilterBtn = document.getElementById('clear-date-filter-btn');
+
+  // Burger Menu & Side Drawer Elements
+  const burgerBtn = document.getElementById('burger-btn');
+  const sideDrawer = document.getElementById('side-drawer');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  const drawerCloseBtn = document.getElementById('drawer-close-btn');
+  const drawerMenuItems = document.querySelectorAll('.drawer-menu-item[data-date-filter]');
+  const drawerClearCompleted = document.getElementById('drawer-clear-completed');
+  const drawerClearAll = document.getElementById('drawer-clear-all');
+
+  // Calendar Modal Elements
+  const calendarBtn = document.getElementById('calendar-btn');
+  const calendarModal = document.getElementById('calendar-modal');
+  const calendarModalClose = document.getElementById('calendar-modal-close');
+  const datePresetBtns = document.querySelectorAll('.date-preset-btn');
+  const calendarPickerInput = document.getElementById('calendar-picker-input');
+  const applySpecificDateBtn = document.getElementById('apply-specific-date-btn');
 
   // Edit Modal Elements
   const editModal = document.getElementById('edit-modal');
@@ -48,17 +72,73 @@
   const editTaskForm = document.getElementById('edit-task-form');
   const editTaskId = document.getElementById('edit-task-id');
   const editTaskText = document.getElementById('edit-task-text');
+  const editTaskDate = document.getElementById('edit-task-date');
   const editTaskStatus = document.getElementById('edit-task-status');
   const editCancelBtn = document.getElementById('edit-cancel-btn');
 
   // Confirm Modal Elements
   const confirmModal = document.getElementById('confirm-modal');
-  const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+  const confirmModalTitle = document.getElementById('confirm-modal-title');
+  const confirmModalMessage = document.getElementById('confirm-modal-message');
+  const confirmActionBtn = document.getElementById('confirm-action-btn');
   const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
 
+  /* ==========================================================================
+     Date Utilities
+     ========================================================================== */
+
   /**
-   * Load tasks from localStorage
+   * Format a Date object to 'YYYY-MM-DD' using local timezone
    */
+  function toLocalYYYYMMDD(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function getTodayStr() {
+    return toLocalYYYYMMDD(new Date());
+  }
+
+  function getTomorrowStr() {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return toLocalYYYYMMDD(d);
+  }
+
+  /**
+   * Format 'YYYY-MM-DD' into readable string (e.g. "Thu, Nov 5, 2026")
+   */
+  function formatHumanDate(dateStr) {
+    if (!dateStr) return 'No Date';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+
+  /**
+   * Format 'YYYY-MM-DD' into short string (e.g. "Nov 5")
+   */
+  function formatShortDate(dateStr) {
+    if (!dateStr) return 'No Date';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  /* ==========================================================================
+     Storage & Data Handling
+     ========================================================================== */
+
   function loadTasks() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -66,15 +146,18 @@
       if (!Array.isArray(tasks)) {
         tasks = [];
       }
+      // Migration: ensure every task has a valid dueDate
+      tasks.forEach((task) => {
+        if (!task.dueDate) {
+          task.dueDate = task.createdAt ? task.createdAt.substring(0, 10) : getTodayStr();
+        }
+      });
     } catch (err) {
       console.error('Failed to parse tasks from localStorage:', err);
       tasks = [];
     }
   }
 
-  /**
-   * Save tasks to localStorage
-   */
   function saveTasks() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -83,9 +166,6 @@
     }
   }
 
-  /**
-   * Escape HTML to prevent XSS
-   */
   function escapeHTML(str) {
     if (!str) return '';
     return str
@@ -96,9 +176,10 @@
       .replace(/'/g, '&#039;');
   }
 
-  /**
-   * Update stats counters
-   */
+  /* ==========================================================================
+     Stats & Filtering
+     ========================================================================== */
+
   function updateStats() {
     const total = tasks.length;
     let unfinished = 0;
@@ -118,26 +199,99 @@
   }
 
   /**
-   * Render tasks list based on current filter & search query
+   * Determine whether a task matches current date filter
+   */
+  function matchesDateFilter(task) {
+    if (dateFilter === 'all') return true;
+
+    const todayStr = getTodayStr();
+    const tomorrowStr = getTomorrowStr();
+
+    if (dateFilter === 'today') {
+      return task.dueDate === todayStr;
+    }
+    if (dateFilter === 'tomorrow') {
+      return task.dueDate === tomorrowStr;
+    }
+    if (dateFilter === 'upcoming') {
+      return Boolean(task.dueDate && task.dueDate > todayStr);
+    }
+    if (dateFilter === 'overdue') {
+      return Boolean(task.dueDate && task.dueDate < todayStr && task.status !== 'completed');
+    }
+    if (dateFilter === 'no-date') {
+      return !task.dueDate;
+    }
+
+    // Specific date 'YYYY-MM-DD'
+    return task.dueDate === dateFilter;
+  }
+
+  /**
+   * Update active date banner UI
+   */
+  function updateDateBanner() {
+    if (dateFilter === 'all') {
+      activeDateBanner.setAttribute('hidden', '');
+    } else {
+      activeDateBanner.removeAttribute('hidden');
+      const todayStr = getTodayStr();
+      const tomorrowStr = getTomorrowStr();
+
+      let label = 'Filtered by: ';
+      if (dateFilter === 'today') label += `Today (${formatShortDate(todayStr)})`;
+      else if (dateFilter === 'tomorrow') label += `Tomorrow (${formatShortDate(tomorrowStr)})`;
+      else if (dateFilter === 'upcoming') label += 'Upcoming Tasks';
+      else if (dateFilter === 'overdue') label += '⚠️ Overdue Tasks';
+      else if (dateFilter === 'no-date') label += 'Tasks Without Date';
+      else label += formatHumanDate(dateFilter);
+
+      activeDateText.textContent = label;
+    }
+
+    // Update active state in drawer menu
+    drawerMenuItems.forEach((item) => {
+      const itemFilter = item.dataset.dateFilter;
+      if (itemFilter === dateFilter) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  /* ==========================================================================
+     Dividing & Rendering Tasks by Dates
+     ========================================================================== */
+
+  /**
+   * Group tasks by date and render clean sections
    */
   function renderTasks() {
     updateStats();
+    updateDateBanner();
 
-    // Filter tasks
+    const todayStr = getTodayStr();
+    const tomorrowStr = getTomorrowStr();
     const query = searchQuery.trim().toLowerCase();
+
+    // 1. Filter tasks
     const filteredTasks = tasks.filter((task) => {
-      const matchesFilter = currentFilter === 'all' || task.status === currentFilter;
+      const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
+      const matchesDate = matchesDateFilter(task);
       const matchesSearch =
         !query ||
         task.text.toLowerCase().includes(query) ||
-        task.status.toLowerCase().includes(query);
+        task.status.toLowerCase().includes(query) ||
+        (task.dueDate && task.dueDate.includes(query)) ||
+        (task.dueDate && formatHumanDate(task.dueDate).toLowerCase().includes(query));
 
-      return matchesFilter && matchesSearch;
+      return matchesStatus && matchesDate && matchesSearch;
     });
 
-    // Check empty state
+    // 2. Check Empty State
     if (filteredTasks.length === 0) {
-      taskList.innerHTML = '';
+      dateGroupsContainer.innerHTML = '';
       emptyState.classList.add('visible');
 
       if (tasks.length === 0) {
@@ -145,60 +299,198 @@
         emptySubtitle.textContent = 'Add your first task above to start organizing your day ✨';
       } else {
         emptyTitle.textContent = 'No matching tasks found';
-        emptySubtitle.textContent = 'Try adjusting your search query or status filter.';
+        emptySubtitle.textContent = 'Try adjusting your search query, status, or date filter.';
       }
       return;
     }
 
     emptyState.classList.remove('visible');
 
-    // Build task items HTML
-    taskList.innerHTML = filteredTasks
-      .map((task) => {
-        const isCompleted = task.status === 'completed';
-        const badgeClass =
-          task.status === 'completed'
-            ? 'badge-completed'
-            : task.status === 'paused'
-            ? 'badge-paused'
-            : 'badge-unfinished';
+    // 3. Partition tasks into date buckets:
+    // - Overdue: dueDate < today and not completed
+    // - Today: dueDate === today
+    // - Tomorrow: dueDate === tomorrow
+    // - Specific Upcoming Dates: map by date string
+    // - Past Completed Dates: map by date string
+    // - No Date: no dueDate
+    const overdueTasks = [];
+    const todayTasks = [];
+    const tomorrowTasks = [];
+    const dateBuckets = {}; // dateStr -> Array
+    const noDateTasks = [];
+
+    filteredTasks.forEach((task) => {
+      if (!task.dueDate) {
+        noDateTasks.push(task);
+        return;
+      }
+
+      if (task.dueDate < todayStr && task.status !== 'completed') {
+        overdueTasks.push(task);
+      } else if (task.dueDate === todayStr) {
+        todayTasks.push(task);
+      } else if (task.dueDate === tomorrowStr) {
+        tomorrowTasks.push(task);
+      } else {
+        if (!dateBuckets[task.dueDate]) {
+          dateBuckets[task.dueDate] = [];
+        }
+        dateBuckets[task.dueDate].push(task);
+      }
+    });
+
+    // Sort upcoming and other dates chronologically
+    const sortedDates = Object.keys(dateBuckets).sort();
+
+    // 4. Build groups structure
+    const groups = [];
+
+    if (overdueTasks.length > 0) {
+      groups.push({
+        id: 'group-overdue',
+        title: 'Overdue',
+        sub: 'Needs Attention',
+        icon: '⚠️',
+        isOverdue: true,
+        tasks: overdueTasks,
+      });
+    }
+
+    if (todayTasks.length > 0) {
+      groups.push({
+        id: 'group-today',
+        title: 'Today',
+        sub: formatHumanDate(todayStr),
+        icon: '☀️',
+        tasks: todayTasks,
+      });
+    }
+
+    if (tomorrowTasks.length > 0) {
+      groups.push({
+        id: 'group-tomorrow',
+        title: 'Tomorrow',
+        sub: formatHumanDate(tomorrowStr),
+        icon: '🌅',
+        tasks: tomorrowTasks,
+      });
+    }
+
+    sortedDates.forEach((dateStr) => {
+      const isPast = dateStr < todayStr;
+      groups.push({
+        id: `group-${dateStr}`,
+        title: formatHumanDate(dateStr),
+        sub: isPast ? 'Earlier' : 'Upcoming',
+        icon: '📆',
+        tasks: dateBuckets[dateStr],
+      });
+    });
+
+    if (noDateTasks.length > 0) {
+      groups.push({
+        id: 'group-no-date',
+        title: 'Without Date',
+        sub: 'General Tasks',
+        icon: '📝',
+        tasks: noDateTasks,
+      });
+    }
+
+    // 5. Render HTML for date groups
+    dateGroupsContainer.innerHTML = groups
+      .map((group) => {
+        const countLabel = group.tasks.length === 1 ? '1 task' : `${group.tasks.length} tasks`;
+        const overdueClass = group.isOverdue ? 'date-group-overdue' : '';
 
         return `
-          <li class="task-item ${isCompleted ? 'is-completed' : ''}" data-id="${escapeHTML(task.id)}">
-            <div class="task-main-row">
-              <span class="task-text">${escapeHTML(task.text)}</span>
-              <span class="status-badge ${badgeClass}">${escapeHTML(task.status)}</span>
-            </div>
-            <div class="task-footer">
-              <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--text-muted);">
-                <span>Status:</span>
-                <select class="status-quick-select" aria-label="Change task status" data-id="${escapeHTML(task.id)}">
-                  <option value="unfinished" ${task.status === 'unfinished' ? 'selected' : ''}>Unfinished</option>
-                  <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>Paused</option>
-                  <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
-                </select>
-              </label>
-              <div class="task-actions">
-                <button type="button" class="btn-action action-edit" data-id="${escapeHTML(task.id)}" title="Edit task">
-                  ✏️ Edit
-                </button>
-                <button type="button" class="btn-action action-delete" data-id="${escapeHTML(task.id)}" title="Delete task">
-                  🗑️ Delete
-                </button>
+          <section class="date-group ${overdueClass}" id="${group.id}">
+            <div class="date-group-header">
+              <div class="date-group-title-row">
+                <span class="date-group-icon" aria-hidden="true">${group.icon}</span>
+                <h2 class="date-group-title">${escapeHTML(group.title)}</h2>
+                <span class="date-group-sub">• ${escapeHTML(group.sub)}</span>
               </div>
+              <span class="date-group-badge">${countLabel}</span>
             </div>
-          </li>
+            <ul class="task-list">
+              ${group.tasks.map((task) => renderTaskItem(task, todayStr)).join('')}
+            </ul>
+          </section>
         `;
       })
       .join('');
   }
 
   /**
-   * Add a new task
+   * Render individual task item HTML
+   */
+  function renderTaskItem(task, todayStr) {
+    const isCompleted = task.status === 'completed';
+    const badgeClass =
+      task.status === 'completed'
+        ? 'badge-completed'
+        : task.status === 'paused'
+        ? 'badge-paused'
+        : 'badge-unfinished';
+
+    const isOverdue = Boolean(task.dueDate && task.dueDate < todayStr && !isCompleted);
+
+    let dateBadgeHTML = '';
+    if (task.dueDate) {
+      if (isOverdue) {
+        dateBadgeHTML = `<span class="date-pill date-pill-overdue" title="Due date: ${task.dueDate}">⚠️ Overdue (${formatShortDate(task.dueDate)})</span>`;
+      } else if (task.dueDate === todayStr) {
+        dateBadgeHTML = `<span class="date-pill" title="Due today">☀️ Today</span>`;
+      } else if (task.dueDate === getTomorrowStr()) {
+        dateBadgeHTML = `<span class="date-pill" title="Due tomorrow">🌅 Tomorrow</span>`;
+      } else {
+        dateBadgeHTML = `<span class="date-pill" title="Due date: ${task.dueDate}">📅 ${formatShortDate(task.dueDate)}</span>`;
+      }
+    }
+
+    return `
+      <li class="task-item ${isCompleted ? 'is-completed' : ''}" data-id="${escapeHTML(task.id)}">
+        <div class="task-main-row">
+          <span class="task-text">${escapeHTML(task.text)}</span>
+          <div class="task-badges">
+            ${dateBadgeHTML}
+            <span class="status-badge ${badgeClass}">${escapeHTML(task.status)}</span>
+          </div>
+        </div>
+        <div class="task-footer">
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--text-muted);">
+            <span>Status:</span>
+            <select class="status-quick-select" aria-label="Change task status" data-id="${escapeHTML(task.id)}">
+              <option value="unfinished" ${task.status === 'unfinished' ? 'selected' : ''}>Unfinished</option>
+              <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>Paused</option>
+              <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+            </select>
+          </label>
+          <div class="task-actions">
+            <button type="button" class="btn-action action-edit" data-id="${escapeHTML(task.id)}" title="Edit task">
+              ✏️ Edit
+            </button>
+            <button type="button" class="btn-action action-delete" data-id="${escapeHTML(task.id)}" title="Delete task">
+              🗑️ Delete
+            </button>
+          </div>
+        </div>
+      </li>
+    `;
+  }
+
+  /* ==========================================================================
+     Actions & Handlers
+     ========================================================================== */
+
+  /**
+   * Add Task
    */
   function handleAddTask(e) {
     e.preventDefault();
     const text = taskInput.value.trim();
+    const dueDate = taskDateInput.value;
     const status = taskStatusInput.value;
 
     if (!text) {
@@ -209,6 +501,7 @@
     const newTask = {
       id: Date.now().toString() + Math.random().toString(36).substring(2, 6),
       text,
+      dueDate: dueDate || getTodayStr(),
       status: ['unfinished', 'paused', 'completed'].includes(status) ? status : 'unfinished',
       createdAt: new Date().toISOString(),
     };
@@ -216,8 +509,9 @@
     tasks.unshift(newTask);
     saveTasks();
 
-    // Reset input
+    // Reset form inputs (keep today's date pre-selected)
     taskInput.value = '';
+    taskDateInput.value = getTodayStr();
     taskStatusInput.value = 'unfinished';
     taskInput.focus();
 
@@ -225,84 +519,7 @@
   }
 
   /**
-   * Open Edit Modal
-   */
-  function openEditModal(taskId) {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    editTaskId.value = task.id;
-    editTaskText.value = task.text;
-    editTaskStatus.value = task.status;
-
-    editModal.removeAttribute('hidden');
-    editTaskText.focus();
-  }
-
-  /**
-   * Close Edit Modal
-   */
-  function closeEditModal() {
-    editModal.setAttribute('hidden', '');
-    editTaskForm.reset();
-  }
-
-  /**
-   * Save Edited Task
-   */
-  function handleSaveEdit(e) {
-    e.preventDefault();
-    const id = editTaskId.value;
-    const text = editTaskText.value.trim();
-    const status = editTaskStatus.value;
-
-    if (!text) {
-      editTaskText.focus();
-      return;
-    }
-
-    const taskIndex = tasks.findIndex((t) => t.id === id);
-    if (taskIndex !== -1) {
-      tasks[taskIndex].text = text;
-      tasks[taskIndex].status = status;
-      saveTasks();
-      renderTasks();
-    }
-
-    closeEditModal();
-  }
-
-  /**
-   * Open Confirm Delete Modal
-   */
-  function openConfirmModal(taskId) {
-    pendingDeleteId = taskId;
-    confirmModal.removeAttribute('hidden');
-    confirmDeleteBtn.focus();
-  }
-
-  /**
-   * Close Confirm Delete Modal
-   */
-  function closeConfirmModal() {
-    pendingDeleteId = null;
-    confirmModal.setAttribute('hidden', '');
-  }
-
-  /**
-   * Execute Delete
-   */
-  function handleConfirmDelete() {
-    if (pendingDeleteId) {
-      tasks = tasks.filter((t) => t.id !== pendingDeleteId);
-      saveTasks();
-      renderTasks();
-    }
-    closeConfirmModal();
-  }
-
-  /**
-   * Quick status change from card dropdown
+   * Quick status switch from task card dropdown
    */
   function handleQuickStatusChange(taskId, newStatus) {
     const task = tasks.find((t) => t.id === taskId);
@@ -314,37 +531,162 @@
   }
 
   /**
-   * Attach Event Listeners
+   * Open Edit Task Modal
    */
+  function openEditModal(taskId) {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    editTaskId.value = task.id;
+    editTaskText.value = task.text;
+    editTaskDate.value = task.dueDate || '';
+    editTaskStatus.value = task.status;
+
+    editModal.removeAttribute('hidden');
+    editTaskText.focus();
+  }
+
+  function closeEditModal() {
+    editModal.setAttribute('hidden', '');
+    editTaskForm.reset();
+  }
+
+  function handleSaveEdit(e) {
+    e.preventDefault();
+    const id = editTaskId.value;
+    const text = editTaskText.value.trim();
+    const dueDate = editTaskDate.value;
+    const status = editTaskStatus.value;
+
+    if (!text) {
+      editTaskText.focus();
+      return;
+    }
+
+    const taskIndex = tasks.findIndex((t) => t.id === id);
+    if (taskIndex !== -1) {
+      tasks[taskIndex].text = text;
+      tasks[taskIndex].dueDate = dueDate;
+      tasks[taskIndex].status = status;
+      saveTasks();
+      renderTasks();
+    }
+
+    closeEditModal();
+  }
+
+  /**
+   * Confirm Modal Dialog Helper
+   */
+  function openConfirmModal(type, taskId = null) {
+    pendingAction = { type, id: taskId };
+
+    if (type === 'delete') {
+      confirmModalTitle.textContent = 'Delete Task?';
+      confirmModalMessage.textContent = 'Are you sure you want to delete this task? This action cannot be undone.';
+      confirmActionBtn.textContent = 'Delete';
+      confirmActionBtn.className = 'btn btn-danger';
+    } else if (type === 'clear-completed') {
+      confirmModalTitle.textContent = 'Clear Completed Tasks?';
+      confirmModalMessage.textContent = 'Are you sure you want to delete all completed tasks from the list?';
+      confirmActionBtn.textContent = 'Clear Completed';
+      confirmActionBtn.className = 'btn btn-danger';
+    } else if (type === 'clear-all') {
+      confirmModalTitle.textContent = 'Clear All Tasks?';
+      confirmModalMessage.textContent = 'Are you sure you want to delete ALL tasks from your list? This cannot be undone.';
+      confirmActionBtn.textContent = 'Delete Everything';
+      confirmActionBtn.className = 'btn btn-danger';
+    }
+
+    confirmModal.removeAttribute('hidden');
+    confirmActionBtn.focus();
+  }
+
+  function closeConfirmModal() {
+    pendingAction = null;
+    confirmModal.setAttribute('hidden', '');
+  }
+
+  function handleExecuteConfirmAction() {
+    if (!pendingAction) return;
+
+    if (pendingAction.type === 'delete' && pendingAction.id) {
+      tasks = tasks.filter((t) => t.id !== pendingAction.id);
+    } else if (pendingAction.type === 'clear-completed') {
+      tasks = tasks.filter((t) => t.status !== 'completed');
+    } else if (pendingAction.type === 'clear-all') {
+      tasks = [];
+    }
+
+    saveTasks();
+    renderTasks();
+    closeConfirmModal();
+  }
+
+  /* ==========================================================================
+     Side Drawer (Burger Menu) Controls
+     ========================================================================== */
+
+  function openDrawer() {
+    sideDrawer.removeAttribute('hidden');
+    drawerBackdrop.removeAttribute('hidden');
+    burgerBtn.setAttribute('aria-expanded', 'true');
+    drawerCloseBtn.focus();
+  }
+
+  function closeDrawer() {
+    sideDrawer.setAttribute('hidden', '');
+    drawerBackdrop.setAttribute('hidden', '');
+    burgerBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  /* ==========================================================================
+     Calendar Modal & Date Filtering
+     ========================================================================== */
+
+  function openCalendarModal() {
+    calendarModal.removeAttribute('hidden');
+    calendarPickerInput.value = dateFilter.length === 10 ? dateFilter : getTodayStr();
+  }
+
+  function closeCalendarModal() {
+    calendarModal.setAttribute('hidden', '');
+  }
+
+  function applyDateFilter(filterValue) {
+    dateFilter = filterValue;
+    renderTasks();
+  }
+
+  /* ==========================================================================
+     Event Listeners Setup
+     ========================================================================== */
+
   function initEvents() {
-    // Add task form
+    // 1. Add Task Form
     addTaskForm.addEventListener('submit', handleAddTask);
 
-    // Task list delegation (Edit, Delete, Status change)
-    taskList.addEventListener('click', (e) => {
+    // 2. Task List delegation (Edit, Delete, Status change)
+    dateGroupsContainer.addEventListener('click', (e) => {
       const editBtn = e.target.closest('.action-edit');
       if (editBtn) {
-        const id = editBtn.dataset.id;
-        openEditModal(id);
+        openEditModal(editBtn.dataset.id);
         return;
       }
 
       const deleteBtn = e.target.closest('.action-delete');
       if (deleteBtn) {
-        const id = deleteBtn.dataset.id;
-        openConfirmModal(id);
+        openConfirmModal('delete', deleteBtn.dataset.id);
       }
     });
 
-    taskList.addEventListener('change', (e) => {
+    dateGroupsContainer.addEventListener('change', (e) => {
       if (e.target.classList.contains('status-quick-select')) {
-        const id = e.target.dataset.id;
-        const newStatus = e.target.value;
-        handleQuickStatusChange(id, newStatus);
+        handleQuickStatusChange(e.target.dataset.id, e.target.value);
       }
     });
 
-    // Search input
+    // 3. Search Bar
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
       if (searchQuery.trim().length > 0) {
@@ -355,7 +697,6 @@
       renderTasks();
     });
 
-    // Clear search button
     clearSearchBtn.addEventListener('click', () => {
       searchInput.value = '';
       searchQuery = '';
@@ -364,26 +705,76 @@
       renderTasks();
     });
 
-    // Filter pills
+    // 4. Status Filter Pills
     filterPillBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         filterPillBtns.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
+        statusFilter = btn.dataset.filter;
         renderTasks();
       });
     });
 
-    // Edit modal form & buttons
+    // 5. Active Date Filter Reset Button
+    clearDateFilterBtn.addEventListener('click', () => {
+      applyDateFilter('all');
+    });
+
+    // 6. Burger Menu Button & Drawer
+    burgerBtn.addEventListener('click', openDrawer);
+    drawerCloseBtn.addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', closeDrawer);
+
+    // Drawer Date View items
+    drawerMenuItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const filterVal = item.dataset.dateFilter;
+        applyDateFilter(filterVal);
+        closeDrawer();
+      });
+    });
+
+    // Drawer Actions
+    drawerClearCompleted.addEventListener('click', () => {
+      closeDrawer();
+      openConfirmModal('clear-completed');
+    });
+
+    drawerClearAll.addEventListener('click', () => {
+      closeDrawer();
+      openConfirmModal('clear-all');
+    });
+
+    // 7. Calendar Button & Modal
+    calendarBtn.addEventListener('click', openCalendarModal);
+    calendarModalClose.addEventListener('click', closeCalendarModal);
+
+    datePresetBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const preset = btn.dataset.preset;
+        applyDateFilter(preset);
+        closeCalendarModal();
+      });
+    });
+
+    applySpecificDateBtn.addEventListener('click', () => {
+      const selectedDate = calendarPickerInput.value;
+      if (selectedDate) {
+        applyDateFilter(selectedDate);
+      }
+      closeCalendarModal();
+    });
+
+    // 8. Edit Modal Form & Controls
     editTaskForm.addEventListener('submit', handleSaveEdit);
     editModalClose.addEventListener('click', closeEditModal);
     editCancelBtn.addEventListener('click', closeEditModal);
 
-    // Confirm modal buttons
-    confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
+    // 9. Confirm Modal Actions
+    confirmActionBtn.addEventListener('click', handleExecuteConfirmAction);
     confirmCancelBtn.addEventListener('click', closeConfirmModal);
 
-    // Close modals on overlay backdrop click
+    // 10. Modals Backdrop Clicks
     editModal.addEventListener('click', (e) => {
       if (e.target === editModal) closeEditModal();
     });
@@ -392,18 +783,31 @@
       if (e.target === confirmModal) closeConfirmModal();
     });
 
-    // Close modals on Escape key
+    calendarModal.addEventListener('click', (e) => {
+      if (e.target === calendarModal) closeCalendarModal();
+    });
+
+    // 11. Keyboard navigation (Escape key)
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        if (!sideDrawer.hasAttribute('hidden')) closeDrawer();
+        if (!calendarModal.hasAttribute('hidden')) closeCalendarModal();
         if (!editModal.hasAttribute('hidden')) closeEditModal();
         if (!confirmModal.hasAttribute('hidden')) closeConfirmModal();
       }
     });
   }
 
-  // Initialize
+  /* ==========================================================================
+     Initialize Application
+     ========================================================================== */
   loadTasks();
+
+  // Pre-fill task date input with today's date
+  if (taskDateInput) {
+    taskDateInput.value = getTodayStr();
+  }
+
   initEvents();
   renderTasks();
 })();
-
