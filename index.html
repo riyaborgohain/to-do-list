@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean To-Do List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-top">
+        <h1>To-Do List</h1>
+        <span class="total-badge" id="total-badge">Total Tasks: 0</span>
+      </div>
+      <p class="subtitle">Keep track of your tasks and stay organized</p>
+
+      <!-- Stats Summary -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number" id="count-unfinished">0</span>
+          <span class="stat-label">Unfinished</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="count-paused">0</span>
+          <span class="stat-label">Paused</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="count-completed">0</span>
+          <span class="stat-label">Completed</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Add Task Card -->
+    <section class="card add-task-card">
+      <form id="add-task-form">
+        <label for="task-input" class="form-label">New Task</label>
+        <div class="input-row">
+          <input 
+            type="text" 
+            id="task-input" 
+            placeholder="What needs to be done?" 
+            autocomplete="off"
+            required
+          >
+          <div class="select-wrapper">
+            <select id="task-status-input" aria-label="Task Status">
+              <option value="unfinished" selected>Unfinished</option>
+              <option value="paused">Paused</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" id="add-btn">
+            <span class="btn-icon">+</span>
+            <span>Add Task</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Search & Filter Controls -->
+    <section class="controls-section">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search tasks by title or status..." 
+          autocomplete="off"
+          aria-label="Search tasks"
+        >
+        <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search">&times;</button>
+      </div>
+
+      <!-- Quick Status Filter Pills -->
+      <div class="filter-pills" role="tablist" aria-label="Filter tasks by status">
+        <button type="button" class="pill-btn active" data-filter="all">All</button>
+        <button type="button" class="pill-btn" data-filter="unfinished">Unfinished</button>
+        <button type="button" class="pill-btn" data-filter="paused">Paused</button>
+        <button type="button" class="pill-btn" data-filter="completed">Completed</button>
+      </div>
+    </section>
+
+    <!-- Task List -->
+    <main class="tasks-container">
+      <ul id="task-list" class="task-list" aria-live="polite">
+        <!-- Tasks rendered dynamically -->
+      </ul>
+
+      <!-- Friendly Empty State -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3 id="empty-title">No tasks yet!</h3>
+        <p id="empty-subtitle">Add your first task above to start organizing your day.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Task Modal -->
+  <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="edit-modal-title">Edit Task</h2>
+        <button type="button" class="modal-close-btn" id="edit-modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="edit-task-form">
+        <input type="hidden" id="edit-task-id">
+        <div class="form-group">
+          <label for="edit-task-text" class="form-label">Task Description</label>
+          <input type="text" id="edit-task-text" class="modal-input" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="edit-task-status" class="form-label">Status</label>
+          <select id="edit-task-status" class="modal-input">
+            <option value="unfinished">Unfinished</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="edit-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal for Deletion -->
+  <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" hidden>
+    <div class="modal-content confirm-box">
+      <div class="confirm-icon">⚠️</div>
+      <h2 id="confirm-modal-title">Delete Task?</h2>
+      <p id="confirm-modal-message">Are you sure you want to delete this task? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="confirm-cancel-btn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
