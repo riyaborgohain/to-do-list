@@ -48,6 +48,12 @@
   const activeDateText = document.getElementById('active-date-text');
   const clearDateFilterBtn = document.getElementById('clear-date-filter-btn');
 
+  // Search Modal Elements
+  const searchModal = document.getElementById('search-modal');
+  const searchModalClose = document.getElementById('search-modal-close');
+  const searchResetBtn = document.getElementById('search-reset-btn');
+  const searchDoneBtn = document.getElementById('search-done-btn');
+
   // Bottom Navigation Bar Elements
   const navHomeBtn = document.getElementById('nav-home-btn');
   const navCalendarBtn = document.getElementById('nav-calendar-btn');
@@ -230,22 +236,30 @@
   }
 
   function updateDateBanner() {
-    if (dateFilter === 'all') {
+    const hasDateFilter = dateFilter !== 'all';
+    const hasSearch = searchQuery.trim().length > 0;
+
+    if (!hasDateFilter && !hasSearch) {
       activeDateBanner.setAttribute('hidden', '');
     } else {
       activeDateBanner.removeAttribute('hidden');
       const todayStr = getTodayStr();
       const tomorrowStr = getTomorrowStr();
 
-      let label = 'Filtered by: ';
-      if (dateFilter === 'today') label += `Today (${formatShortDate(todayStr)})`;
-      else if (dateFilter === 'tomorrow') label += `Tomorrow (${formatShortDate(tomorrowStr)})`;
-      else if (dateFilter === 'upcoming') label += 'Upcoming Tasks';
-      else if (dateFilter === 'overdue') label += '⚠️ Overdue Tasks';
-      else if (dateFilter === 'no-date') label += 'Tasks Without Date';
-      else label += formatHumanDate(dateFilter);
+      const parts = [];
+      if (hasDateFilter) {
+        if (dateFilter === 'today') parts.push(`Date: Today (${formatShortDate(todayStr)})`);
+        else if (dateFilter === 'tomorrow') parts.push(`Date: Tomorrow (${formatShortDate(tomorrowStr)})`);
+        else if (dateFilter === 'upcoming') parts.push('Date: Upcoming');
+        else if (dateFilter === 'overdue') parts.push('Date: ⚠️ Overdue');
+        else if (dateFilter === 'no-date') parts.push('Date: Without Date');
+        else parts.push(`Date: ${formatHumanDate(dateFilter)}`);
+      }
+      if (hasSearch) {
+        parts.push(`Search: "${searchQuery.trim()}"`);
+      }
 
-      activeDateText.textContent = label;
+      activeDateText.textContent = parts.join(' • ');
     }
 
     drawerMenuItems.forEach((item) => {
@@ -642,6 +656,21 @@
   }
 
   /* ==========================================================================
+     Search Modal Controls
+     ========================================================================== */
+
+  function openSearchModal() {
+    searchModal.removeAttribute('hidden');
+    setTimeout(() => {
+      searchInput.focus();
+    }, 50);
+  }
+
+  function closeSearchModal() {
+    searchModal.setAttribute('hidden', '');
+  }
+
+  /* ==========================================================================
      Event Listeners
      ========================================================================== */
 
@@ -672,13 +701,24 @@
     }
 
     if (navSearchBtn) {
-      navSearchBtn.addEventListener('click', () => {
-        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          searchInput.focus();
-          searchInput.classList.add('search-focused');
-          setTimeout(() => searchInput.classList.remove('search-focused'), 1600);
-        }, 150);
+      navSearchBtn.addEventListener('click', openSearchModal);
+    }
+
+    if (searchModalClose) {
+      searchModalClose.addEventListener('click', closeSearchModal);
+    }
+
+    if (searchDoneBtn) {
+      searchDoneBtn.addEventListener('click', closeSearchModal);
+    }
+
+    if (searchResetBtn) {
+      searchResetBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchQuery = '';
+        clearSearchBtn.classList.remove('visible');
+        renderTasks();
+        searchInput.focus();
       });
     }
 
@@ -763,6 +803,10 @@
     // 5. Active Date Filter Reset Button
     clearDateFilterBtn.addEventListener('click', () => {
       applyDateFilter('all');
+      searchQuery = '';
+      searchInput.value = '';
+      clearSearchBtn.classList.remove('visible');
+      renderTasks();
     });
 
     // 6. Burger Menu Button & Drawer
@@ -788,7 +832,9 @@
     });
 
     // 7. Calendar Button & Modal
-    calendarBtn.addEventListener('click', openCalendarModal);
+    if (calendarBtn) {
+      calendarBtn.addEventListener('click', openCalendarModal);
+    }
     calendarModalClose.addEventListener('click', closeCalendarModal);
 
     datePresetBtns.forEach((btn) => {
@@ -820,6 +866,12 @@
       if (e.target === createModal) closeCreateModal();
     });
 
+    if (searchModal) {
+      searchModal.addEventListener('click', (e) => {
+        if (e.target === searchModal) closeSearchModal();
+      });
+    }
+
     editModal.addEventListener('click', (e) => {
       if (e.target === editModal) closeEditModal();
     });
@@ -835,6 +887,7 @@
     // 11. Escape key navigation
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        if (searchModal && !searchModal.hasAttribute('hidden')) closeSearchModal();
         if (!createModal.hasAttribute('hidden')) closeCreateModal();
         if (!sideDrawer.hasAttribute('hidden')) closeDrawer();
         if (!calendarModal.hasAttribute('hidden')) closeCalendarModal();

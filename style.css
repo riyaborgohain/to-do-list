@@ -990,8 +990,9 @@ body {
 /* ==========================================================================
    Calendar Modal & Presets Grid
    ========================================================================== */
-.calendar-modal-content {
-  max-width: 460px;
+.calendar-modal-content,
+.search-modal-content {
+  max-width: 480px;
 }
 
 .modal-description {

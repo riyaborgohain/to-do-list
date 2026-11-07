@@ -44,35 +44,12 @@
       </div>
     </header>
 
-    <!-- Search, Calendar & Filter Controls -->
+    <!-- Filter & Active Status Controls (Clean home screen without search/calendar section) -->
     <section class="controls-section">
-      <div class="controls-top-row">
-        <!-- Search Box -->
-        <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-          </svg>
-          <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Search tasks by title or status..." 
-            autocomplete="off"
-            aria-label="Search tasks"
-          >
-          <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search">&times;</button>
-        </div>
-
-        <!-- Calendar Button -->
-        <button type="button" class="btn btn-secondary calendar-trigger-btn" id="calendar-btn" title="Filter tasks by calendar date">
-          <span class="btn-icon">📅</span>
-          <span class="calendar-btn-text">Calendar</span>
-        </button>
-      </div>
-
-      <!-- Active Date Filter Pill (shown when a date filter is applied) -->
+      <!-- Active Filter Pill (shown when a date or search filter is applied) -->
       <div id="active-date-banner" class="active-date-banner" hidden>
-        <span class="active-date-text" id="active-date-text">Filtered by date</span>
-        <button type="button" id="clear-date-filter-btn" class="clear-date-btn" title="Reset date filter" aria-label="Reset date filter">&times;</button>
+        <span class="active-date-text" id="active-date-text">Filtered</span>
+        <button type="button" id="clear-date-filter-btn" class="clear-date-btn" title="Reset filter" aria-label="Reset filter">&times;</button>
       </div>
 
       <!-- Quick Status Filter Pills -->
@@ -103,7 +80,7 @@
     </main>
   </div>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Bottom Navigation Bar (Home, Calendar, Create [Center], Search, Menu) -->
   <nav class="bottom-nav" aria-label="Bottom Navigation">
     <div class="bottom-nav-inner">
       <!-- 1. Home Button (Left) -->
@@ -154,6 +131,33 @@
       </button>
     </div>
   </nav>
+
+  <!-- Search Modal (Triggered by Search Button in Bottom Nav) -->
+  <div id="search-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="search-modal-title" hidden>
+    <div class="modal-content search-modal-content">
+      <div class="modal-header">
+        <h2 id="search-modal-title">Search Tasks</h2>
+        <button type="button" class="modal-close-btn" id="search-modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search by title, date, or status..." 
+          autocomplete="off"
+          aria-label="Search tasks"
+        >
+        <button type="button" id="clear-search-btn" class="clear-btn" title="Clear search" aria-label="Clear search">&times;</button>
+      </div>
+      <div class="modal-actions" style="margin-top: 18px;">
+        <button type="button" class="btn btn-secondary" id="search-reset-btn">Reset</button>
+        <button type="button" class="btn btn-primary" id="search-done-btn">View Results</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Create Task Modal -->
   <div id="create-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="create-modal-title" hidden>
