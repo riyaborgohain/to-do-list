@@ -1,15 +1,18 @@
 # Simple To-Do List App
 
-A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a butter yellow palette and Open Sans typography.
+A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a butter yellow palette, Open Sans typography, and an app-like bottom navigation bar.
 
 ## Features
 
-- **Floating Action Button (FAB)**: A circular floating button at the bottom-right corner with a `+` icon to quickly create new tasks in a clean modal dialog.
+- **Bottom Navigation Bar**: A fixed mobile-friendly bottom bar featuring:
+  - 🏠 **Home** (Left): Resets all active filters and scrolls smoothly to the top.
+  - 📅 **Calendar**: Opens the date filtering dialog with presets (*Today*, *Tomorrow*, *Upcoming*, *Overdue*) or specific date picker.
+  - ➕ **Create Task** (Center): Prominently elevated circular button to quickly add new tasks.
+  - 🔍 **Search**: Instantly scrolls to and focuses the search input with a highlight glow.
+  - ☰ **Menu** (Right): Opens the slide-in navigation drawer with date views and task management actions.
 - **Single Card Grouping**: Each date category (e.g. *Today*, *Tomorrow*, *Upcoming*, *Overdue*) is presented as **one single butter yellow card** with multiple tasks organized inside as checklist rows.
-- **Interactive Checklists**: Checkboxes with mint green checkmarks and strikethrough styling inspired by modern mobile task boards.
+- **Interactive Checklists**: Checkboxes with mint green checkmarks and strikethrough styling inspired by modern task boards.
 - **Progress Tracking**: Card headers show completed vs. total counts (e.g. *3 of 9 Tasks*).
-- **Calendar Button & Date Filtering**: Quickly filter tasks using the 📅 Calendar button with presets (*Today*, *Tomorrow*, *Upcoming*, *Overdue*) or jump to any specific calendar date.
-- **Burger Menu**: Slide-in navigation drawer in the top right corner with date views, task management actions (Clear Completed, Clear All), and project links.
 - **Task Statuses**: Organize tasks by `Unfinished`, `Paused`, and `Completed`.
 - **Counters**: View total task count as well as breakdown by status in real-time.
 - **Search & Status Filters**: Search tasks by title or status, plus quick-filter tabs.

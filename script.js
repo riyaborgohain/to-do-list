@@ -48,8 +48,14 @@
   const activeDateText = document.getElementById('active-date-text');
   const clearDateFilterBtn = document.getElementById('clear-date-filter-btn');
 
-  // Floating Action Button (FAB) & Create Modal Elements
-  const fabCreateBtn = document.getElementById('fab-create-btn');
+  // Bottom Navigation Bar Elements
+  const navHomeBtn = document.getElementById('nav-home-btn');
+  const navCalendarBtn = document.getElementById('nav-calendar-btn');
+  const navCreateBtn = document.getElementById('nav-create-btn');
+  const navSearchBtn = document.getElementById('nav-search-btn');
+  const navMenuBtn = document.getElementById('nav-menu-btn');
+
+  // Create Modal Elements
   const createModal = document.getElementById('create-modal');
   const createModalClose = document.getElementById('create-modal-close');
   const createTaskForm = document.getElementById('create-task-form');
@@ -640,8 +646,47 @@
      ========================================================================== */
 
   function initEvents() {
-    // 1. Floating Action Button & Create Modal
-    fabCreateBtn.addEventListener('click', openCreateModal);
+    // 1. Bottom Navigation Bar Actions
+    if (navHomeBtn) {
+      navHomeBtn.addEventListener('click', () => {
+        statusFilter = 'all';
+        filterPillBtns.forEach((b) => b.classList.toggle('active', b.dataset.filter === 'all'));
+        applyDateFilter('all');
+        searchInput.value = '';
+        searchQuery = '';
+        clearSearchBtn.classList.remove('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        document.querySelectorAll('.bottom-nav .nav-item').forEach((item) => item.classList.remove('active'));
+        navHomeBtn.classList.add('active');
+        renderTasks();
+      });
+    }
+
+    if (navCalendarBtn) {
+      navCalendarBtn.addEventListener('click', openCalendarModal);
+    }
+
+    if (navCreateBtn) {
+      navCreateBtn.addEventListener('click', openCreateModal);
+    }
+
+    if (navSearchBtn) {
+      navSearchBtn.addEventListener('click', () => {
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          searchInput.focus();
+          searchInput.classList.add('search-focused');
+          setTimeout(() => searchInput.classList.remove('search-focused'), 1600);
+        }, 150);
+      });
+    }
+
+    if (navMenuBtn) {
+      navMenuBtn.addEventListener('click', openDrawer);
+    }
+
+    // Create Modal form submission & cancellation
     createTaskForm.addEventListener('submit', handleCreateTask);
     createModalClose.addEventListener('click', closeCreateModal);
     createCancelBtn.addEventListener('click', closeCreateModal);
