@@ -16,11 +16,11 @@
   --bg-color: #eceef2;
   --surface-color: #ffffff;
 
-  /* Card Color System (#F8F8F8 without stroke outline as requested) */
-  --card-butter-yellow: #F8F8F8;
-  --card-butter-hover: #F0F0F0;
+  /* Card Color System (#F3F1D9 without stroke outline as requested) */
+  --card-butter-yellow: #F3F1D9;
+  --card-butter-hover: #ece9ce;
   --card-butter-border: transparent;
-  --card-butter-completed: #FCFCFC;
+  --card-butter-completed: #f8f6e6;
   --card-butter-completed-border: transparent;
 
   /* Text Colors */
@@ -170,7 +170,7 @@ body {
   font-weight: 400;
 }
 
-/* Stats Grid in #F8F8F8 Cards (No stroke outline) */
+/* Stats Grid in #F3F1D9 Cards (No stroke outline) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -284,7 +284,7 @@ body {
   gap: 12px;
 }
 
-/* Active Date/Search Filter Banner (#F8F8F8 without stroke outline) */
+/* Active Date/Search Filter Banner (#F3F1D9 without stroke outline) */
 .active-date-banner {
   display: flex;
   align-items: center;
@@ -350,7 +350,7 @@ body {
 }
 
 /* ==========================================================================
-   Date Group Cards: ONE SINGLE #F8F8F8 CARD (NO STROKE OUTLINE)
+   Date Group Cards: ONE SINGLE #F3F1D9 CARD (NO STROKE OUTLINE)
    ========================================================================== */
 .tasks-container {
   min-height: 200px;
@@ -362,7 +362,7 @@ body {
   gap: 20px;
 }
 
-/* The Single #F8F8F8 Card without stroke outline */
+/* The Single #F3F1D9 Card without stroke outline */
 .date-group-card {
   background: var(--card-butter-yellow);
   border: none;
