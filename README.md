@@ -1,10 +1,14 @@
 # Simple To-Do List App
 
-A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a soft `#F3F1D9` card palette, stroke-free minimalist design, Open Sans typography, and a mobile bottom navigation bar.
+A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a clean `#F8F8F8` card palette, stroke-free minimalist design, Inter typography hierarchy, and a mobile bottom navigation bar.
 
 ## Features
 
-- **Soft `#F3F1D9` Palette**: Warm pastel card aesthetic (`#F3F1D9`) without harsh stroke outlines for a seamless modern look.
+- **Soft `#F8F8F8` Palette**: Minimalist off-white card aesthetic (`#F8F8F8`) without stroke outlines for a seamless modern look.
+- **Inter Typography Hierarchy**:
+  - `h1`: **Inter Semi-bold** (`600`)
+  - `h2`: **Inter Regular** (`400`)
+  - `h3`: **Inter Light** (`300`)
 - **Clean Header**: Minimalist title bar with live task counters, keeping all menu access conveniently housed in the bottom navigation.
 - **Bottom Navigation Bar**: Fixed mobile-friendly bottom bar featuring:
   - 🏠 **Home** (Left): Resets active filters and smoothly scrolls to top.

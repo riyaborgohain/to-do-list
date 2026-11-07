@@ -8,18 +8,19 @@
 }
 
 :root {
-  /* Typography: Open Sans as requested */
+  /* Typography */
   --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* App Canvas Background inspired by the soft mobile mockup palette */
-  --bg-color: #f0f2f7;
+  /* App Canvas Background */
+  --bg-color: #eceef2;
   --surface-color: #ffffff;
 
-  /* Card Color System (#F3F1D9 without stroke outline as requested) */
-  --card-butter-yellow: #F3F1D9;
-  --card-butter-hover: #ECE9CE;
+  /* Card Color System (#F8F8F8 without stroke outline as requested) */
+  --card-butter-yellow: #F8F8F8;
+  --card-butter-hover: #F0F0F0;
   --card-butter-border: transparent;
-  --card-butter-completed: #F8F6E6;
+  --card-butter-completed: #FCFCFC;
   --card-butter-completed-border: transparent;
 
   /* Text Colors */
@@ -29,12 +30,12 @@
   --border-color: #e2e5eb;
   --border-focus: #3b82f6;
 
-  /* Primary Brand (inspired by the blue action button in the mockup) */
+  /* Primary Brand */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
 
-  /* Checklist Mint Green (inspired by the Groceries board in mockup) */
+  /* Checklist Mint Green */
   --mint-green: #10b981;
   --mint-green-hover: #059669;
   --mint-light: #ecfdf5;
@@ -74,6 +75,30 @@
   --radius-lg: 20px;
   --radius-xl: 26px;
   --radius-full: 9999px;
+}
+
+/* ==========================================================================
+   Typography Hierarchy (Inter semi-bold for h1, regular for h2, light for h3)
+   ========================================================================== */
+h1, .header-branding h1 {
+  font-family: var(--font-heading);
+  font-weight: 600; /* Inter semi-bold */
+  letter-spacing: -0.025em;
+  color: var(--text-main);
+}
+
+h2, .date-group-title, .modal-header h2, .drawer-header h2, .confirm-box h2 {
+  font-family: var(--font-heading);
+  font-weight: 400; /* Inter regular */
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+h3, .empty-state h3, #empty-title {
+  font-family: var(--font-heading);
+  font-weight: 300; /* Inter light */
+  letter-spacing: -0.005em;
+  color: var(--text-main);
 }
 
 body {
@@ -124,9 +149,7 @@ body {
 
 .header-branding h1 {
   font-size: 2rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
 .total-badge {
@@ -147,7 +170,7 @@ body {
   font-weight: 400;
 }
 
-/* Stats Grid in #F3F1D9 Cards (No stroke outline) */
+/* Stats Grid in #F8F8F8 Cards (No stroke outline) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -261,7 +284,7 @@ body {
   gap: 12px;
 }
 
-/* Active Date/Search Filter Banner (#F3F1D9 without stroke outline) */
+/* Active Date/Search Filter Banner (#F8F8F8 without stroke outline) */
 .active-date-banner {
   display: flex;
   align-items: center;
@@ -327,7 +350,7 @@ body {
 }
 
 /* ==========================================================================
-   Date Group Cards: ONE SINGLE #F3F1D9 CARD (NO STROKE OUTLINE)
+   Date Group Cards: ONE SINGLE #F8F8F8 CARD (NO STROKE OUTLINE)
    ========================================================================== */
 .tasks-container {
   min-height: 200px;
@@ -339,7 +362,7 @@ body {
   gap: 20px;
 }
 
-/* The Single #F3F1D9 Card without stroke outline */
+/* The Single #F8F8F8 Card without stroke outline */
 .date-group-card {
   background: var(--card-butter-yellow);
   border: none;
@@ -382,16 +405,13 @@ body {
 
 .date-group-title {
   font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .date-group-sub {
   font-size: 0.8rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 500;
   margin-top: 2px;
 }
 
@@ -446,7 +466,7 @@ body {
 }
 
 .task-row:hover {
-  background-color: rgba(255, 255, 255, 0.55);
+  background-color: rgba(255, 255, 255, 0.65);
 }
 
 /* Left part of row: Checkbox + Title */
@@ -464,7 +484,7 @@ body {
   height: 22px;
   min-width: 22px;
   border-radius: 7px;
-  border: 2px solid #bebaa5;
+  border: 2px solid #ccc9be;
   background-color: #ffffff;
   cursor: pointer;
   display: flex;
@@ -795,8 +815,6 @@ body {
 
 .drawer-header h2 {
   font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--text-main);
 }
 
 .drawer-close-btn {
@@ -1020,9 +1038,7 @@ body {
 }
 
 .empty-state h3 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-main);
+  font-size: 1.35rem;
   margin-bottom: 6px;
 }
 
@@ -1088,8 +1104,6 @@ body {
 
 .modal-header h2 {
   font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--text-main);
 }
 
 .modal-close-btn {
@@ -1167,7 +1181,6 @@ select.modal-input {
 
 .confirm-box h2 {
   font-size: 1.35rem;
-  font-weight: 800;
   margin-bottom: 8px;
 }
 
