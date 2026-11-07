@@ -27,7 +27,7 @@
       </div>
       <p class="subtitle">Keep track of your tasks and stay organized</p>
 
-      <!-- Stats Summary -->
+      <!-- Stats Summary (Butter Yellow Cards) -->
       <div class="stats-grid">
         <div class="stat-card">
           <span class="stat-number" id="count-unfinished">0</span>
@@ -43,41 +43,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Add Task Card -->
-    <section class="card add-task-card">
-      <form id="add-task-form">
-        <label for="task-input" class="form-label">New Task</label>
-        <div class="input-row">
-          <input 
-            type="text" 
-            id="task-input" 
-            placeholder="What needs to be done?" 
-            autocomplete="off"
-            required
-          >
-          <div class="date-input-wrapper" title="Set due date">
-            <span class="date-icon-inline" aria-hidden="true">📅</span>
-            <input 
-              type="date" 
-              id="task-date-input" 
-              aria-label="Task due date"
-            >
-          </div>
-          <div class="select-wrapper">
-            <select id="task-status-input" aria-label="Task Status">
-              <option value="unfinished" selected>Unfinished</option>
-              <option value="paused">Paused</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary" id="add-btn">
-            <span class="btn-icon">+</span>
-            <span>Add Task</span>
-          </button>
-        </div>
-      </form>
-    </section>
 
     <!-- Search, Calendar & Filter Controls -->
     <section class="controls-section">
@@ -119,19 +84,63 @@
       </div>
     </section>
 
-    <!-- Task List (Divided by Dates) -->
+    <!-- Task List (Each date group is a single Butter Yellow card with multiple tasks) -->
     <main class="tasks-container">
       <div id="date-groups-container" class="date-groups-container" aria-live="polite">
-        <!-- Date-divided task groups rendered dynamically -->
+        <!-- Date-divided task groups rendered dynamically as single cards -->
       </div>
 
       <!-- Friendly Empty State -->
       <div id="empty-state" class="empty-state">
         <div class="empty-icon">📝</div>
         <h3 id="empty-title">No tasks yet!</h3>
-        <p id="empty-subtitle">Add your first task above to start organizing your day.</p>
+        <p id="empty-subtitle">Tap the <strong>+</strong> button at the bottom right to create your first task.</p>
+        <button type="button" class="btn btn-primary empty-create-btn" id="empty-create-btn">
+          <span class="btn-icon">+</span>
+          <span>Create Task</span>
+        </button>
       </div>
     </main>
+  </div>
+
+  <!-- Floating Action Button (FAB) at Bottom Right Corner -->
+  <button type="button" class="fab-btn" id="fab-create-btn" aria-label="Create new task" title="Create new task">
+    <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- Create Task Modal (Triggered by FAB) -->
+  <div id="create-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="create-modal-title" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="create-modal-title">Create New Task</h2>
+        <button type="button" class="modal-close-btn" id="create-modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="create-task-form">
+        <div class="form-group">
+          <label for="create-task-text" class="form-label">Task Description</label>
+          <input type="text" id="create-task-text" class="modal-input" placeholder="What needs to be done?" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="create-task-date" class="form-label">Due Date</label>
+          <input type="date" id="create-task-date" class="modal-input">
+        </div>
+        <div class="form-group">
+          <label for="create-task-status" class="form-label">Status</label>
+          <select id="create-task-status" class="modal-input">
+            <option value="unfinished" selected>Unfinished</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="create-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Task</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Side Drawer / Burger Navigation Menu -->

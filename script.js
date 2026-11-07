@@ -1,15 +1,17 @@
 /**
  * Simple To-Do List Application
  * Features:
- * - Add tasks with: Title, Due Date, and Status (Unfinished, Paused, Completed)
- * - Divide and group tasks based on dates (Overdue, Today, Tomorrow, Upcoming, Without Date)
+ * - Floating Action Button (FAB) at bottom right corner with '+' to create tasks
+ * - Single Butter Yellow Card for each date group, holding multiple tasks
+ * - Interactive checklist checkboxes with mint green completion & strikethrough
+ * - Status handling: Unfinished, Paused, Completed
  * - Calendar button with interactive Date Filter modal & specific date picker
  * - Burger menu (Side Drawer) in top right corner with date views & quick actions
  * - Real-time search and status filtering
  * - Edit task text, date, and status
  * - Delete tasks with confirmation
  * - LocalStorage persistence
- * - Mobile-responsive & accessible
+ * - Mobile-responsive & accessible with Open Sans typography
  */
 
 (function () {
@@ -26,14 +28,11 @@
   let pendingAction = null;     // { type: 'delete' | 'clear-completed' | 'clear-all', id?: string }
 
   // DOM Elements - Main Layout
-  const addTaskForm = document.getElementById('add-task-form');
-  const taskInput = document.getElementById('task-input');
-  const taskDateInput = document.getElementById('task-date-input');
-  const taskStatusInput = document.getElementById('task-status-input');
   const dateGroupsContainer = document.getElementById('date-groups-container');
   const emptyState = document.getElementById('empty-state');
   const emptyTitle = document.getElementById('empty-title');
   const emptySubtitle = document.getElementById('empty-subtitle');
+  const emptyCreateBtn = document.getElementById('empty-create-btn');
 
   // Stats Elements
   const totalBadge = document.getElementById('total-badge');
@@ -48,6 +47,16 @@
   const activeDateBanner = document.getElementById('active-date-banner');
   const activeDateText = document.getElementById('active-date-text');
   const clearDateFilterBtn = document.getElementById('clear-date-filter-btn');
+
+  // Floating Action Button (FAB) & Create Modal Elements
+  const fabCreateBtn = document.getElementById('fab-create-btn');
+  const createModal = document.getElementById('create-modal');
+  const createModalClose = document.getElementById('create-modal-close');
+  const createTaskForm = document.getElementById('create-task-form');
+  const createTaskText = document.getElementById('create-task-text');
+  const createTaskDate = document.getElementById('create-task-date');
+  const createTaskStatus = document.getElementById('create-task-status');
+  const createCancelBtn = document.getElementById('create-cancel-btn');
 
   // Burger Menu & Side Drawer Elements
   const burgerBtn = document.getElementById('burger-btn');
@@ -87,9 +96,6 @@
      Date Utilities
      ========================================================================== */
 
-  /**
-   * Format a Date object to 'YYYY-MM-DD' using local timezone
-   */
   function toLocalYYYYMMDD(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -107,9 +113,6 @@
     return toLocalYYYYMMDD(d);
   }
 
-  /**
-   * Format 'YYYY-MM-DD' into readable string (e.g. "Thu, Nov 5, 2026")
-   */
   function formatHumanDate(dateStr) {
     if (!dateStr) return 'No Date';
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -122,9 +125,6 @@
     });
   }
 
-  /**
-   * Format 'YYYY-MM-DD' into short string (e.g. "Nov 5")
-   */
   function formatShortDate(dateStr) {
     if (!dateStr) return 'No Date';
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -198,9 +198,6 @@
     countCompleted.textContent = completed;
   }
 
-  /**
-   * Determine whether a task matches current date filter
-   */
   function matchesDateFilter(task) {
     if (dateFilter === 'all') return true;
 
@@ -223,13 +220,9 @@
       return !task.dueDate;
     }
 
-    // Specific date 'YYYY-MM-DD'
     return task.dueDate === dateFilter;
   }
 
-  /**
-   * Update active date banner UI
-   */
   function updateDateBanner() {
     if (dateFilter === 'all') {
       activeDateBanner.setAttribute('hidden', '');
@@ -249,7 +242,6 @@
       activeDateText.textContent = label;
     }
 
-    // Update active state in drawer menu
     drawerMenuItems.forEach((item) => {
       const itemFilter = item.dataset.dateFilter;
       if (itemFilter === dateFilter) {
@@ -261,12 +253,9 @@
   }
 
   /* ==========================================================================
-     Dividing & Rendering Tasks by Dates
+     Dividing Tasks into ONE Single Butter Yellow Card per Group
      ========================================================================== */
 
-  /**
-   * Group tasks by date and render clean sections
-   */
   function renderTasks() {
     updateStats();
     updateDateBanner();
@@ -289,14 +278,14 @@
       return matchesStatus && matchesDate && matchesSearch;
     });
 
-    // 2. Check Empty State
+    // 2. Empty State
     if (filteredTasks.length === 0) {
       dateGroupsContainer.innerHTML = '';
       emptyState.classList.add('visible');
 
       if (tasks.length === 0) {
         emptyTitle.textContent = 'No tasks yet!';
-        emptySubtitle.textContent = 'Add your first task above to start organizing your day ✨';
+        emptySubtitle.textContent = 'Tap the + button at the bottom right to create your first task ✨';
       } else {
         emptyTitle.textContent = 'No matching tasks found';
         emptySubtitle.textContent = 'Try adjusting your search query, status, or date filter.';
@@ -306,17 +295,11 @@
 
     emptyState.classList.remove('visible');
 
-    // 3. Partition tasks into date buckets:
-    // - Overdue: dueDate < today and not completed
-    // - Today: dueDate === today
-    // - Tomorrow: dueDate === tomorrow
-    // - Specific Upcoming Dates: map by date string
-    // - Past Completed Dates: map by date string
-    // - No Date: no dueDate
+    // 3. Partition tasks into date buckets
     const overdueTasks = [];
     const todayTasks = [];
     const tomorrowTasks = [];
-    const dateBuckets = {}; // dateStr -> Array
+    const dateBuckets = {};
     const noDateTasks = [];
 
     filteredTasks.forEach((task) => {
@@ -339,10 +322,7 @@
       }
     });
 
-    // Sort upcoming and other dates chronologically
     const sortedDates = Object.keys(dateBuckets).sort();
-
-    // 4. Build groups structure
     const groups = [];
 
     if (overdueTasks.length > 0) {
@@ -397,24 +377,28 @@
       });
     }
 
-    // 5. Render HTML for date groups
+    // 4. Render HTML: Each group is ONE SINGLE butter yellow card containing multiple tasks
     dateGroupsContainer.innerHTML = groups
       .map((group) => {
-        const countLabel = group.tasks.length === 1 ? '1 task' : `${group.tasks.length} tasks`;
+        const completedCount = group.tasks.filter((t) => t.status === 'completed').length;
+        const totalCount = group.tasks.length;
+        const countLabel = `${completedCount} of ${totalCount} Tasks`;
         const overdueClass = group.isOverdue ? 'date-group-overdue' : '';
 
         return `
-          <section class="date-group ${overdueClass}" id="${group.id}">
+          <section class="date-group-card ${overdueClass}" id="${group.id}">
             <div class="date-group-header">
               <div class="date-group-title-row">
                 <span class="date-group-icon" aria-hidden="true">${group.icon}</span>
-                <h2 class="date-group-title">${escapeHTML(group.title)}</h2>
-                <span class="date-group-sub">• ${escapeHTML(group.sub)}</span>
+                <div class="date-group-titles">
+                  <h2 class="date-group-title">${escapeHTML(group.title)}</h2>
+                  <span class="date-group-sub">${escapeHTML(group.sub)}</span>
+                </div>
               </div>
-              <span class="date-group-badge">${countLabel}</span>
+              <span class="date-group-badge">${escapeHTML(countLabel)}</span>
             </div>
             <ul class="task-list">
-              ${group.tasks.map((task) => renderTaskItem(task, todayStr)).join('')}
+              ${group.tasks.map((task) => renderTaskRow(task, todayStr)).join('')}
             </ul>
           </section>
         `;
@@ -423,9 +407,9 @@
   }
 
   /**
-   * Render individual task item HTML
+   * Render individual task row inside the single card
    */
-  function renderTaskItem(task, todayStr) {
+  function renderTaskRow(task, todayStr) {
     const isCompleted = task.status === 'completed';
     const badgeClass =
       task.status === 'completed'
@@ -437,47 +421,34 @@
     const isOverdue = Boolean(task.dueDate && task.dueDate < todayStr && !isCompleted);
 
     let dateBadgeHTML = '';
-    if (task.dueDate) {
-      if (isOverdue) {
-        dateBadgeHTML = `<span class="date-pill date-pill-overdue" title="Due date: ${task.dueDate}">⚠️ Overdue (${formatShortDate(task.dueDate)})</span>`;
-      } else if (task.dueDate === todayStr) {
-        dateBadgeHTML = `<span class="date-pill" title="Due today">☀️ Today</span>`;
-      } else if (task.dueDate === getTomorrowStr()) {
-        dateBadgeHTML = `<span class="date-pill" title="Due tomorrow">🌅 Tomorrow</span>`;
-      } else {
-        dateBadgeHTML = `<span class="date-pill" title="Due date: ${task.dueDate}">📅 ${formatShortDate(task.dueDate)}</span>`;
-      }
+    if (task.dueDate && isOverdue) {
+      dateBadgeHTML = `<span class="date-pill date-pill-overdue" title="Due date: ${task.dueDate}">⚠️ Overdue</span>`;
     }
 
     return `
-      <li class="task-item ${isCompleted ? 'is-completed' : ''}" data-id="${escapeHTML(task.id)}">
-        <div class="task-main-row">
+      <li class="task-row ${isCompleted ? 'is-completed' : ''}" data-id="${escapeHTML(task.id)}">
+        <div class="task-row-left">
           <button type="button" class="task-checkbox-btn ${isCompleted ? 'checked' : ''}" data-id="${escapeHTML(task.id)}" title="${isCompleted ? 'Mark as unfinished' : 'Mark as completed'}" aria-label="Toggle task completion">
             <svg class="checkbox-check-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 8.5 6.5 12 13 4.5"></polyline>
             </svg>
           </button>
           <span class="task-text">${escapeHTML(task.text)}</span>
-          <div class="task-badges">
-            ${dateBadgeHTML}
-            <span class="status-badge ${badgeClass}">${escapeHTML(task.status)}</span>
-          </div>
         </div>
-        <div class="task-footer">
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--text-muted);">
-            <span>Status:</span>
-            <select class="status-quick-select" aria-label="Change task status" data-id="${escapeHTML(task.id)}">
-              <option value="unfinished" ${task.status === 'unfinished' ? 'selected' : ''}>Unfinished</option>
-              <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>Paused</option>
-              <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
-            </select>
-          </label>
+        <div class="task-row-right">
+          ${dateBadgeHTML}
+          <span class="status-badge ${badgeClass}">${escapeHTML(task.status)}</span>
+          <select class="status-quick-select" aria-label="Change task status" data-id="${escapeHTML(task.id)}">
+            <option value="unfinished" ${task.status === 'unfinished' ? 'selected' : ''}>Unfinished</option>
+            <option value="paused" ${task.status === 'paused' ? 'selected' : ''}>Paused</option>
+            <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+          </select>
           <div class="task-actions">
-            <button type="button" class="btn-action action-edit" data-id="${escapeHTML(task.id)}" title="Edit task">
-              ✏️ Edit
+            <button type="button" class="btn-action action-edit" data-id="${escapeHTML(task.id)}" title="Edit task" aria-label="Edit task">
+              ✏️
             </button>
-            <button type="button" class="btn-action action-delete" data-id="${escapeHTML(task.id)}" title="Delete task">
-              🗑️ Delete
+            <button type="button" class="btn-action action-delete" data-id="${escapeHTML(task.id)}" title="Delete task" aria-label="Delete task">
+              🗑️
             </button>
           </div>
         </div>
@@ -486,20 +457,32 @@
   }
 
   /* ==========================================================================
-     Actions & Handlers
+     Create Task Modal & FAB Handlers
      ========================================================================== */
 
-  /**
-   * Add Task
-   */
-  function handleAddTask(e) {
+  function openCreateModal() {
+    createTaskText.value = '';
+    createTaskDate.value = getTodayStr();
+    createTaskStatus.value = 'unfinished';
+    createModal.removeAttribute('hidden');
+    setTimeout(() => {
+      createTaskText.focus();
+    }, 50);
+  }
+
+  function closeCreateModal() {
+    createModal.setAttribute('hidden', '');
+    createTaskForm.reset();
+  }
+
+  function handleCreateTask(e) {
     e.preventDefault();
-    const text = taskInput.value.trim();
-    const dueDate = taskDateInput.value;
-    const status = taskStatusInput.value;
+    const text = createTaskText.value.trim();
+    const dueDate = createTaskDate.value;
+    const status = createTaskStatus.value;
 
     if (!text) {
-      taskInput.focus();
+      createTaskText.focus();
       return;
     }
 
@@ -513,19 +496,14 @@
 
     tasks.unshift(newTask);
     saveTasks();
-
-    // Reset form inputs (keep today's date pre-selected)
-    taskInput.value = '';
-    taskDateInput.value = getTodayStr();
-    taskStatusInput.value = 'unfinished';
-    taskInput.focus();
-
+    closeCreateModal();
     renderTasks();
   }
 
-  /**
-   * Quick status switch from task card dropdown
-   */
+  /* ==========================================================================
+     Quick Status, Edit, and Delete Handlers
+     ========================================================================== */
+
   function handleQuickStatusChange(taskId, newStatus) {
     const task = tasks.find((t) => t.id === taskId);
     if (task && task.status !== newStatus) {
@@ -535,9 +513,6 @@
     }
   }
 
-  /**
-   * Open Edit Task Modal
-   */
   function openEditModal(taskId) {
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
@@ -548,7 +523,7 @@
     editTaskStatus.value = task.status;
 
     editModal.removeAttribute('hidden');
-    editTaskText.focus();
+    setTimeout(() => editTaskText.focus(), 50);
   }
 
   function closeEditModal() {
@@ -580,9 +555,6 @@
     closeEditModal();
   }
 
-  /**
-   * Confirm Modal Dialog Helper
-   */
   function openConfirmModal(type, taskId = null) {
     pendingAction = { type, id: taskId };
 
@@ -629,7 +601,7 @@
   }
 
   /* ==========================================================================
-     Side Drawer (Burger Menu) Controls
+     Side Drawer Controls
      ========================================================================== */
 
   function openDrawer() {
@@ -646,7 +618,7 @@
   }
 
   /* ==========================================================================
-     Calendar Modal & Date Filtering
+     Calendar Modal & Filtering
      ========================================================================== */
 
   function openCalendarModal() {
@@ -664,15 +636,24 @@
   }
 
   /* ==========================================================================
-     Event Listeners Setup
+     Event Listeners
      ========================================================================== */
 
   function initEvents() {
-    // 1. Add Task Form
-    addTaskForm.addEventListener('submit', handleAddTask);
+    // 1. Floating Action Button & Create Modal
+    fabCreateBtn.addEventListener('click', openCreateModal);
+    createTaskForm.addEventListener('submit', handleCreateTask);
+    createModalClose.addEventListener('click', closeCreateModal);
+    createCancelBtn.addEventListener('click', closeCreateModal);
 
-    // 2. Task List delegation (Checkbox, Edit, Delete, Status change)
+    // Empty state create button
+    if (emptyCreateBtn) {
+      emptyCreateBtn.addEventListener('click', openCreateModal);
+    }
+
+    // 2. Task List delegation (Checkbox, Edit, Delete, Status select)
     dateGroupsContainer.addEventListener('click', (e) => {
+      // Toggle completion checkbox
       const checkboxBtn = e.target.closest('.task-checkbox-btn');
       if (checkboxBtn) {
         const id = checkboxBtn.dataset.id;
@@ -685,12 +666,14 @@
         return;
       }
 
+      // Edit button
       const editBtn = e.target.closest('.action-edit');
       if (editBtn) {
         openEditModal(editBtn.dataset.id);
         return;
       }
 
+      // Delete button
       const deleteBtn = e.target.closest('.action-delete');
       if (deleteBtn) {
         openConfirmModal('delete', deleteBtn.dataset.id);
@@ -742,16 +725,13 @@
     drawerCloseBtn.addEventListener('click', closeDrawer);
     drawerBackdrop.addEventListener('click', closeDrawer);
 
-    // Drawer Date View items
     drawerMenuItems.forEach((item) => {
       item.addEventListener('click', () => {
-        const filterVal = item.dataset.dateFilter;
-        applyDateFilter(filterVal);
+        applyDateFilter(item.dataset.dateFilter);
         closeDrawer();
       });
     });
 
-    // Drawer Actions
     drawerClearCompleted.addEventListener('click', () => {
       closeDrawer();
       openConfirmModal('clear-completed');
@@ -768,8 +748,7 @@
 
     datePresetBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const preset = btn.dataset.preset;
-        applyDateFilter(preset);
+        applyDateFilter(btn.dataset.preset);
         closeCalendarModal();
       });
     });
@@ -792,6 +771,10 @@
     confirmCancelBtn.addEventListener('click', closeConfirmModal);
 
     // 10. Modals Backdrop Clicks
+    createModal.addEventListener('click', (e) => {
+      if (e.target === createModal) closeCreateModal();
+    });
+
     editModal.addEventListener('click', (e) => {
       if (e.target === editModal) closeEditModal();
     });
@@ -804,9 +787,10 @@
       if (e.target === calendarModal) closeCalendarModal();
     });
 
-    // 11. Keyboard navigation (Escape key)
+    // 11. Escape key navigation
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        if (!createModal.hasAttribute('hidden')) closeCreateModal();
         if (!sideDrawer.hasAttribute('hidden')) closeDrawer();
         if (!calendarModal.hasAttribute('hidden')) closeCalendarModal();
         if (!editModal.hasAttribute('hidden')) closeEditModal();
@@ -819,12 +803,6 @@
      Initialize Application
      ========================================================================== */
   loadTasks();
-
-  // Pre-fill task date input with today's date
-  if (taskDateInput) {
-    taskDateInput.value = getTodayStr();
-  }
-
   initEvents();
   renderTasks();
 })();
