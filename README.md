@@ -20,7 +20,7 @@ A lightweight, responsive To-Do List application built with pure HTML, CSS, and 
 - **Interactive Checklists**: Checkboxes with mint green checkmarks and strikethrough styling.
 - **Progress Tracking**: Card headers show completed vs. total counts (e.g. *3 of 9 Tasks*).
 - **Task Statuses**: Organize tasks by `Unfinished`, `Paused`, and `Completed`.
-- **Counters**: View total task count as well as breakdown by status in real-time.
+- **Counters**: View total task count at the top in real-time.
 - **Quick Status Filters**: One-tap filter pills (`All`, `Unfinished`, `Paused`, `Completed`).
 - **Edit & Quick-Change**: Modify task titles, due dates, or switch statuses on the fly.
 - **Delete Confirmation**: Confirmation prompt before deleting any task.

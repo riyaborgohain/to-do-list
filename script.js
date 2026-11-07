@@ -204,10 +204,10 @@
       else unfinished++;
     });
 
-    totalBadge.textContent = `Total Tasks: ${total}`;
-    countUnfinished.textContent = unfinished;
-    countPaused.textContent = paused;
-    countCompleted.textContent = completed;
+    if (totalBadge) totalBadge.textContent = `Total Tasks: ${total}`;
+    if (countUnfinished) countUnfinished.textContent = unfinished;
+    if (countPaused) countPaused.textContent = paused;
+    if (countCompleted) countCompleted.textContent = completed;
   }
 
   function matchesDateFilter(task) {
