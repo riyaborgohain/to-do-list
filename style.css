@@ -15,12 +15,12 @@
   --bg-color: #f0f2f7;
   --surface-color: #ffffff;
 
-  /* Butter Yellow Card System */
-  --card-butter-yellow: #fff9db;
-  --card-butter-hover: #fff4c2;
-  --card-butter-border: #f8df82;
-  --card-butter-completed: #fffcf0;
-  --card-butter-completed-border: #fbeaba;
+  /* Card Color System (#F3F1D9 without stroke outline as requested) */
+  --card-butter-yellow: #F3F1D9;
+  --card-butter-hover: #ECE9CE;
+  --card-butter-border: transparent;
+  --card-butter-completed: #F8F6E6;
+  --card-butter-completed-border: transparent;
 
   /* Text Colors */
   --text-main: #232018;
@@ -62,10 +62,10 @@
   --danger-hover: #b91c1c;
   --danger-light: #fef2f2;
 
-  /* Soft modern shadows matching mobile mockups */
-  --shadow-sm: 0 2px 4px rgba(60, 50, 20, 0.04);
-  --shadow-card: 0 6px 20px rgba(180, 150, 40, 0.09), 0 2px 5px rgba(0, 0, 0, 0.03);
-  --shadow-card-hover: 0 10px 28px rgba(180, 150, 40, 0.14), 0 3px 8px rgba(0, 0, 0, 0.04);
+  /* Soft modern shadows without stroke outlines */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 12px 28px -4px rgba(30, 25, 10, 0.12), 0 6px 12px -2px rgba(30, 25, 10, 0.06);
 
   /* Large, friendly curved corners matching the mockup */
@@ -100,7 +100,7 @@ body {
 }
 
 /* ==========================================================================
-   Header & Burger Button
+   Header
    ========================================================================== */
 .app-header {
   display: flex;
@@ -141,46 +141,13 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Burger Button at Top Right Corner */
-.burger-btn {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 44px;
-  height: 44px;
-  background: var(--surface-color);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  padding: 8px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.18s ease;
-  flex-shrink: 0;
-}
-
-.burger-btn:hover {
-  background-color: var(--card-butter-yellow);
-  border-color: var(--card-butter-border);
-  transform: translateY(-1px);
-}
-
-.burger-bar {
-  width: 20px;
-  height: 2.2px;
-  background-color: var(--text-main);
-  border-radius: 2px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
 .subtitle {
   color: var(--text-muted);
   font-size: 0.95rem;
   font-weight: 400;
 }
 
-/* Stats Grid in Butter Yellow Cards */
+/* Stats Grid in #F3F1D9 Cards (No stroke outline) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -190,7 +157,7 @@ body {
 
 .stat-card {
   background: var(--card-butter-yellow);
-  border: 1.5px solid var(--card-butter-border);
+  border: none;
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   display: flex;
@@ -267,7 +234,7 @@ body {
 
 .btn-secondary:hover {
   background-color: var(--card-butter-yellow);
-  border-color: var(--card-butter-border);
+  border-color: transparent;
 }
 
 .btn-danger {
@@ -286,7 +253,7 @@ body {
 }
 
 /* ==========================================================================
-   Controls: Search, Calendar Button & Filters
+   Controls: Status Filters & Active Filter Banner
    ========================================================================== */
 .controls-section {
   display: flex;
@@ -294,88 +261,19 @@ body {
   gap: 12px;
 }
 
-.controls-top-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  width: 18px;
-  height: 18px;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
-.search-box input {
-  width: 100%;
-  min-height: 46px;
-  padding: 10px 42px;
-  font-size: 0.925rem;
-  font-family: inherit;
-  color: var(--text-main);
-  background: #ffffff;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  outline: none;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.search-box input.search-focused {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-.clear-btn {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.4rem;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: var(--radius-full);
-  display: none;
-  line-height: 1;
-}
-
-.clear-btn:hover {
-  color: var(--text-main);
-}
-
-.clear-btn.visible {
-  display: block;
-}
-
-.calendar-trigger-btn {
-  flex-shrink: 0;
-  border-radius: var(--radius-lg);
-}
-
-/* Active Date Filter Banner */
+/* Active Date/Search Filter Banner (#F3F1D9 without stroke outline) */
 .active-date-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: var(--card-butter-yellow);
-  border: 1.5px solid var(--card-butter-border);
+  border: none;
   border-radius: var(--radius-md);
   padding: 9px 16px;
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--text-main);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .active-date-banner[hidden] {
@@ -418,7 +316,7 @@ body {
 
 .pill-btn:hover {
   background-color: var(--card-butter-yellow);
-  border-color: var(--card-butter-border);
+  border-color: transparent;
   color: var(--text-main);
 }
 
@@ -429,7 +327,7 @@ body {
 }
 
 /* ==========================================================================
-   Date Group Cards: ONE SINGLE BUTTER YELLOW CARD WITH MULTIPLE TASKS
+   Date Group Cards: ONE SINGLE #F3F1D9 CARD (NO STROKE OUTLINE)
    ========================================================================== */
 .tasks-container {
   min-height: 200px;
@@ -441,10 +339,10 @@ body {
   gap: 20px;
 }
 
-/* The Single Butter Yellow Card */
+/* The Single #F3F1D9 Card without stroke outline */
 .date-group-card {
   background: var(--card-butter-yellow);
-  border: 1.5px solid var(--card-butter-border);
+  border: none;
   border-radius: var(--radius-xl);
   padding: 22px 24px;
   box-shadow: var(--shadow-card);
@@ -463,7 +361,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 12px;
-  border-bottom: 1.5px solid rgba(220, 195, 100, 0.45);
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.06);
 }
 
 .date-group-title-row {
@@ -504,14 +402,14 @@ body {
   font-weight: 700;
   padding: 4px 12px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--card-butter-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   white-space: nowrap;
 }
 
 .date-group-card.date-group-overdue {
-  border-color: #fca5a5;
-  background: #fff8eb;
+  border: none;
+  background: #fdf2e9;
 }
 
 .date-group-card.date-group-overdue .date-group-title {
@@ -521,7 +419,7 @@ body {
 .date-group-card.date-group-overdue .date-group-badge {
   background-color: var(--overdue-bg);
   color: var(--overdue-text);
-  border-color: var(--overdue-border);
+  border: none;
 }
 
 /* Checklist Rows inside the single card */
@@ -533,7 +431,7 @@ body {
 
 .task-row {
   padding: 12px 6px;
-  border-bottom: 1px solid rgba(220, 195, 100, 0.35);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -548,7 +446,7 @@ body {
 }
 
 .task-row:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.55);
 }
 
 /* Left part of row: Checkbox + Title */
@@ -560,13 +458,13 @@ body {
   min-width: 0;
 }
 
-/* Checklist Checkbox - Inspired by Mockup */
+/* Checklist Checkbox */
 .task-checkbox-btn {
   width: 22px;
   height: 22px;
   min-width: 22px;
   border-radius: 7px;
-  border: 2px solid #cdbe82;
+  border: 2px solid #bebaa5;
   background-color: #ffffff;
   cursor: pointer;
   display: flex;
@@ -666,13 +564,13 @@ body {
   border-radius: var(--radius-full);
   background-color: #ffffff;
   color: var(--text-muted);
-  border: 1px solid #ebd88a;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .date-pill-overdue {
   background-color: var(--overdue-bg);
   color: var(--overdue-text);
-  border-color: var(--overdue-border);
   font-weight: 700;
 }
 
@@ -683,7 +581,7 @@ body {
   font-weight: 600;
   border-radius: var(--radius-sm);
   background-size: 13px;
-  border-color: #e5cb73;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background-color: #ffffff;
   cursor: pointer;
   appearance: none;
@@ -704,7 +602,7 @@ body {
   font-size: 0.8rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 1px solid #e5cb73;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background-color: #ffffff;
   color: var(--text-main);
   cursor: pointer;
@@ -714,7 +612,6 @@ body {
 
 .btn-action:hover {
   background-color: var(--card-butter-yellow);
-  border-color: #d1b452;
   transform: translateY(-1px);
 }
 
@@ -799,7 +696,7 @@ body {
   line-height: 1;
 }
 
-/* Active Indicator Dot under Home / Active Item */
+/* Active Indicator Dot under Home */
 .nav-dot {
   width: 4px;
   height: 4px;
@@ -850,7 +747,7 @@ body {
 }
 
 /* ==========================================================================
-   Side Drawer (Burger Menu)
+   Side Drawer
    ========================================================================== */
 .drawer-backdrop {
   position: fixed;
@@ -892,7 +789,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 22px 24px;
-  border-bottom: 1.5px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   background-color: var(--card-butter-yellow);
 }
 
@@ -959,7 +856,7 @@ body {
   font-family: inherit;
   color: var(--text-main);
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
   text-decoration: none;
@@ -972,7 +869,6 @@ body {
 
 .drawer-menu-item.active {
   background-color: var(--card-butter-yellow);
-  border-color: var(--card-butter-border);
   color: var(--text-main);
   font-weight: 700;
 }
@@ -988,8 +884,66 @@ body {
 }
 
 /* ==========================================================================
-   Calendar Modal & Presets Grid
+   Search Box & Modals
    ========================================================================== */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 42px;
+  font-size: 0.925rem;
+  font-family: inherit;
+  color: var(--text-main);
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  display: none;
+  line-height: 1;
+}
+
+.clear-btn:hover {
+  color: var(--text-main);
+}
+
+.clear-btn.visible {
+  display: block;
+}
+
 .calendar-modal-content,
 .search-modal-content {
   max-width: 480px;
@@ -1017,13 +971,12 @@ body {
 
 .date-preset-btn:hover {
   background-color: var(--card-butter-yellow);
-  border-color: var(--card-butter-border);
   color: var(--text-main);
 }
 
 .calendar-specific-date-box {
   background: var(--card-butter-yellow);
-  border: 1.5px solid var(--card-butter-border);
+  border: none;
   border-radius: var(--radius-lg);
   padding: 16px;
 }
@@ -1049,10 +1002,11 @@ body {
   justify-content: center;
   text-align: center;
   background: var(--card-butter-yellow);
-  border: 2px dashed var(--card-butter-border);
+  border: none;
   border-radius: var(--radius-xl);
   padding: 48px 24px;
   margin-top: 10px;
+  box-shadow: var(--shadow-card);
 }
 
 .empty-state.visible {
@@ -1238,24 +1192,6 @@ select.modal-input {
 
   .header-branding h1 {
     font-size: 1.6rem;
-  }
-
-  .burger-btn {
-    width: 40px;
-    height: 40px;
-    padding: 6px;
-  }
-
-  .controls-top-row {
-    flex-direction: row;
-  }
-
-  .calendar-trigger-btn .calendar-btn-text {
-    display: none;
-  }
-
-  .calendar-trigger-btn {
-    padding: 10px 14px;
   }
 
   .stats-grid {

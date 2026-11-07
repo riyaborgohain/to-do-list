@@ -1,18 +1,19 @@
 # Simple To-Do List App
 
-A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a butter yellow palette, Open Sans typography, and an app-like bottom navigation bar.
+A lightweight, responsive To-Do List application built with pure HTML, CSS, and modern JavaScript, featuring a soft `#F3F1D9` card palette, stroke-free minimalist design, Open Sans typography, and a mobile bottom navigation bar.
 
 ## Features
 
-- **Clean Minimalist Home Screen**: An uncluttered main view displaying only your task overview, status filters, and grouped task cards, free of inline search and calendar bars.
-- **Bottom Navigation Bar**: A fixed mobile-friendly bottom bar featuring:
-  - 🏠 **Home** (Left): Resets all active filters and scrolls smoothly to the top.
-  - 📅 **Calendar**: Opens the date filtering dialog with presets (*Today*, *Tomorrow*, *Upcoming*, *Overdue*) or specific date picker.
-  - ➕ **Create Task** (Center): Prominently elevated circular button to quickly add new tasks.
-  - 🔍 **Search**: Opens a dedicated search dialog to quickly find tasks by title, date, or status.
-  - ☰ **Menu** (Right): Opens the slide-in navigation drawer with date views and task management actions.
-- **Single Card Grouping**: Each date category (e.g. *Today*, *Tomorrow*, *Upcoming*, *Overdue*) is presented as **one single butter yellow card** with multiple tasks organized inside as checklist rows.
-- **Interactive Checklists**: Checkboxes with mint green checkmarks and strikethrough styling inspired by modern task boards.
+- **Soft `#F3F1D9` Palette**: Warm pastel card aesthetic (`#F3F1D9`) without harsh stroke outlines for a seamless modern look.
+- **Clean Header**: Minimalist title bar with live task counters, keeping all menu access conveniently housed in the bottom navigation.
+- **Bottom Navigation Bar**: Fixed mobile-friendly bottom bar featuring:
+  - 🏠 **Home** (Left): Resets active filters and smoothly scrolls to top.
+  - 📅 **Calendar**: Date filtering dialog with presets (*Today*, *Tomorrow*, *Upcoming*, *Overdue*) or specific date picker.
+  - ➕ **Create Task** (Center): Elevated circular button to quickly add new tasks.
+  - 🔍 **Search**: Dedicated search modal to find tasks in real-time by title, date, or status.
+  - ☰ **Menu** (Right): Slide-in navigation drawer with date views and task management actions.
+- **Single Card Grouping**: Each date category (e.g. *Today*, *Tomorrow*, *Upcoming*, *Overdue*) is presented as **one single card** with multiple tasks organized inside as checklist rows.
+- **Interactive Checklists**: Checkboxes with mint green checkmarks and strikethrough styling.
 - **Progress Tracking**: Card headers show completed vs. total counts (e.g. *3 of 9 Tasks*).
 - **Task Statuses**: Organize tasks by `Unfinished`, `Paused`, and `Completed`.
 - **Counters**: View total task count as well as breakdown by status in real-time.

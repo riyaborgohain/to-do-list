@@ -810,7 +810,9 @@
     });
 
     // 6. Burger Menu Button & Drawer
-    burgerBtn.addEventListener('click', openDrawer);
+    if (burgerBtn) {
+      burgerBtn.addEventListener('click', openDrawer);
+    }
     drawerCloseBtn.addEventListener('click', closeDrawer);
     drawerBackdrop.addEventListener('click', closeDrawer);
 
